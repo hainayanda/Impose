@@ -9,16 +9,18 @@
 /* Begin PBXBuildFile section */
 		2E0B6386955AA06DA5DBAFDF /* Pods_Impose_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		BBBE2962258EF96200C8DE2D /* StubDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBE2961258EF96200C8DE2D /* StubDependency.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		17BF0E49F6471A8D75AEEA1A /* Impose.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = Impose.podspec; path = ../Impose.podspec; sourceTree = "<group>"; };
+		17BF0E49F6471A8D75AEEA1A /* Impose.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Impose.podspec; path = ../Impose.podspec; sourceTree = "<group>"; };
 		28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Impose_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACE51AFB9204008FA782 /* Impose_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Impose_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		9A2C7E7038EA72F35DA7F07F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		B6D72B213FF205AC5D7EE776 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		9A2C7E7038EA72F35DA7F07F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		B6D72B213FF205AC5D7EE776 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		BBBE2961258EF96200C8DE2D /* StubDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubDependency.swift; sourceTree = "<group>"; };
 		E37E2F268E346AE1523F11E3 /* Pods-Impose_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impose_Tests.debug.xcconfig"; path = "Target Support Files/Pods-Impose_Tests/Pods-Impose_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		FAC94B3EF40FC06E8B749FD2 /* Pods-Impose_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impose_Tests.release.xcconfig"; path = "Target Support Files/Pods-Impose_Tests/Pods-Impose_Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -41,7 +43,6 @@
 				E37E2F268E346AE1523F11E3 /* Pods-Impose_Tests.debug.xcconfig */,
 				FAC94B3EF40FC06E8B749FD2 /* Pods-Impose_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -77,6 +78,7 @@
 			children = (
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				BBBE2961258EF96200C8DE2D /* StubDependency.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -131,14 +133,9 @@
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
-					607FACCF1AFB9204008FA782 = {
-						CreatedOnToolsVersion = 6.3.1;
-						LastSwiftMigration = 0900;
-					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						LastSwiftMigration = 0900;
-						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
 			};
@@ -147,6 +144,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -222,6 +220,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBBE2962258EF96200C8DE2D /* StubDependency.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -346,7 +345,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Impose_Example.app/Impose_Example";
 			};
 			name = Debug;
 		};
@@ -364,7 +362,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Impose_Example.app/Impose_Example";
 			};
 			name = Release;
 		};
