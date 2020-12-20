@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2E0B6386955AA06DA5DBAFDF /* Pods_Impose_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		BB575AD4258F4062007EA8B9 /* StubUnforceDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB575AD3258F4062007EA8B9 /* StubUnforceDependency.swift */; };
+		BB575AD7258F407F007EA8B9 /* Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB575AD6258F407F007EA8B9 /* Dependency.swift */; };
 		BBBE2962258EF96200C8DE2D /* StubDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBE2961258EF96200C8DE2D /* StubDependency.swift */; };
 /* End PBXBuildFile section */
 
@@ -20,6 +22,8 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		9A2C7E7038EA72F35DA7F07F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		B6D72B213FF205AC5D7EE776 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		BB575AD3258F4062007EA8B9 /* StubUnforceDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubUnforceDependency.swift; sourceTree = "<group>"; };
+		BB575AD6258F407F007EA8B9 /* Dependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependency.swift; sourceTree = "<group>"; };
 		BBBE2961258EF96200C8DE2D /* StubDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubDependency.swift; sourceTree = "<group>"; };
 		E37E2F268E346AE1523F11E3 /* Pods-Impose_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impose_Tests.debug.xcconfig"; path = "Target Support Files/Pods-Impose_Tests/Pods-Impose_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		FAC94B3EF40FC06E8B749FD2 /* Pods-Impose_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impose_Tests.release.xcconfig"; path = "Target Support Files/Pods-Impose_Tests/Pods-Impose_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -76,9 +80,9 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				BB575AD9258F4091007EA8B9 /* Mock */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
-				BBBE2961258EF96200C8DE2D /* StubDependency.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -99,6 +103,16 @@
 				9A2C7E7038EA72F35DA7F07F /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		BB575AD9258F4091007EA8B9 /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				BBBE2961258EF96200C8DE2D /* StubDependency.swift */,
+				BB575AD3258F4062007EA8B9 /* StubUnforceDependency.swift */,
+				BB575AD6258F407F007EA8B9 /* Dependency.swift */,
+			);
+			name = Mock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,6 +236,8 @@
 			files = (
 				BBBE2962258EF96200C8DE2D /* StubDependency.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				BB575AD7258F407F007EA8B9 /* Dependency.swift in Sources */,
+				BB575AD4258F4062007EA8B9 /* StubUnforceDependency.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

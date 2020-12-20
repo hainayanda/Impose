@@ -27,24 +27,32 @@ public class OtherWrappedInject {
     var someOtherUpperDependency: SomeOtherUpperDependency
 }
 
-protocol Dependency {
-    func explainMyself() -> String
-}
-
-class SomeDependency: Dependency {
-    func explainMyself() -> String {
-        return "I am SomeDependency and Injected"
+public class InitInject {
+    
+    var dependency: Dependency
+    var someDependency: SomeDependency
+    var someOtherDependency: SomeOtherDependency
+    
+    init(dependency: Dependency = inject(),
+         someDependency: SomeDependency = inject(of: SomeDependency.self),
+         someOtherDependency: SomeOtherDependency = inject()) {
+        self.dependency = dependency
+        self.someDependency = someDependency
+        self.someOtherDependency = someOtherDependency
     }
 }
 
-class SomeOtherDependency: SomeDependency {
-    override func explainMyself() -> String {
-        return "I am SomeOtherDependency and Injected"
-    }
-}
-
-class SomeOtherUpperDependency: SomeOtherDependency {
-    override func explainMyself() -> String {
-        return "I am SomeOtherUpperDependency and Injected"
+public class OtherInitInject {
+    
+    var dependency: Dependency
+    var someDependency: SomeDependency
+    var someOtherUpperDependency: SomeOtherUpperDependency
+    
+    init(dependency: Dependency = inject(ifNoMatchUse: .furthestType),
+         someDependency: SomeDependency = inject(of: SomeDependency.self, ifNoMatchUse: .furthestType),
+         someOtherUpperDependency: SomeOtherUpperDependency = inject(ifNoMatchUse: .furthestType)) {
+        self.dependency = dependency
+        self.someDependency = someDependency
+        self.someOtherUpperDependency = someOtherUpperDependency
     }
 }
