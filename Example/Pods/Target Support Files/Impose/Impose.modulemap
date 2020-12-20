@@ -1,0 +1,6 @@
+framework module Impose {
+  umbrella header "Impose-umbrella.h"
+
+  export *
+  module * { export * }
+}
