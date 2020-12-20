@@ -39,6 +39,30 @@ class TableOfContentsSpec: QuickSpec {
                 expect(injected.someDependency.explainMyself()).to(equal("I am SomeOtherUpperDependency and Injected"))
                 expect(injected.someOtherUpperDependency.explainMyself()).to(equal("I am SomeOtherUpperDependency and Injected"))
             }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedUnforceInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am SomeDependency and Injected"))
+                expect(injected.someDependency?.explainMyself()).to(equal("I am SomeOtherDependency and Injected"))
+                expect(injected.someOtherDependency?.explainMyself()).to(equal("I am SomeOtherDependency and Injected"))
+            }
+            it("should inject from init with nearest type") {
+                let injected = InitUnforceInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am SomeDependency and Injected"))
+                expect(injected.someDependency?.explainMyself()).to(equal("I am SomeOtherDependency and Injected"))
+                expect(injected.someOtherDependency?.explainMyself()).to(equal("I am SomeOtherDependency and Injected"))
+            }
+            it("should inject from property wrapper with furthest type") {
+                let injected = OtherWrappedUnforceInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am SomeDependency and Injected"))
+                expect(injected.someDependency?.explainMyself()).to(equal("I am SomeOtherUpperDependency and Injected"))
+                expect(injected.someOtherUpperDependency?.explainMyself()).to(equal("I am SomeOtherUpperDependency and Injected"))
+            }
+            it("should inject from init with furthest type") {
+                let injected = OtherInitUnforceInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am SomeDependency and Injected"))
+                expect(injected.someDependency?.explainMyself()).to(equal("I am SomeOtherUpperDependency and Injected"))
+                expect(injected.someOtherUpperDependency?.explainMyself()).to(equal("I am SomeOtherUpperDependency and Injected"))
+            }
         }
         describe("negative test") {
             beforeEach {
@@ -47,36 +71,30 @@ class TableOfContentsSpec: QuickSpec {
             it("should error") {
                 expect({ try Imposer.shared.imposedInstance(of: Dependency.self) }).to(throwError())
             }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedUnforceInject()
+                expect(injected.dependency).to(beNil())
+                expect(injected.someDependency).to(beNil())
+                expect(injected.someOtherDependency).to(beNil())
+            }
+            it("should inject from init with nearest type") {
+                let injected = InitUnforceInject()
+                expect(injected.dependency).to(beNil())
+                expect(injected.someDependency).to(beNil())
+                expect(injected.someOtherDependency).to(beNil())
+            }
+            it("should inject from property wrapper with furthest type") {
+                let injected = OtherWrappedUnforceInject()
+                expect(injected.dependency).to(beNil())
+                expect(injected.someDependency).to(beNil())
+                expect(injected.someOtherUpperDependency).to(beNil())
+            }
+            it("should inject from init with furthest type") {
+                let injected = OtherInitUnforceInject()
+                expect(injected.dependency).to(beNil())
+                expect(injected.someDependency).to(beNil())
+                expect(injected.someOtherUpperDependency).to(beNil())
+            }
         }
-    }
-}
-
-public class InitInject {
-    
-    var dependency: Dependency
-    var someDependency: SomeDependency
-    var someOtherDependency: SomeOtherDependency
-    
-    init(dependency: Dependency = inject(),
-         someDependency: SomeDependency = inject(),
-         someOtherDependency: SomeOtherDependency = inject()) {
-        self.dependency = dependency
-        self.someDependency = someDependency
-        self.someOtherDependency = someOtherDependency
-    }
-}
-
-public class OtherInitInject {
-    
-    var dependency: Dependency
-    var someDependency: SomeDependency
-    var someOtherUpperDependency: SomeOtherUpperDependency
-    
-    init(dependency: Dependency = inject(ifNoMatchUse: .furthestType),
-         someDependency: SomeDependency = inject(ifNoMatchUse: .furthestType),
-         someOtherUpperDependency: SomeOtherUpperDependency = inject(ifNoMatchUse: .furthestType)) {
-        self.dependency = dependency
-        self.someDependency = someDependency
-        self.someOtherUpperDependency = someOtherUpperDependency
     }
 }

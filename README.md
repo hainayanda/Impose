@@ -8,10 +8,6 @@ Impose is a simple dependency injection library for Swift
 [![License](https://img.shields.io/cocoapods/l/Impose.svg?style=flat)](https://cocoapods.org/pods/Impose)
 [![Platform](https://img.shields.io/cocoapods/p/Impose.svg?style=flat)](https://cocoapods.org/pods/Impose)
 
-## Example
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
 ## Requirements
 
 - Swift 5.0 or higher
@@ -70,7 +66,7 @@ Imposer.impose(for: Dependency.self) {
 }
 ```
 
-the provider automatically just create one instance only. If you want the provider to create new instance for every injection, you can just pass option:
+the provider automatically just create one instance only (singleton). If you want the provider to create new instance for every injection, you can just pass option:
 
 ```swift
 Imposer.impose(for: Dependency.self, option: .alwaysNew, SomeDependency())
@@ -94,6 +90,28 @@ class InjectedByInit {
         } catch {
             self.dependency = DefaultDependency()
         }
+    }
+}
+```
+
+## Optional Inject
+
+Sometimes you just don't want your app to be throwing error because of failure in dependency injection. At those cases, just use `@UnforceInjected` attribute or `unforceInject` function. It will return nil if injection fail:
+
+```swift
+```swift
+class InjectedByPropertyWrapper {
+    @UnforceInjected var dependency: Dependency?
+    
+    ...
+    ...
+}
+
+class InjectedByInit {
+    var dependency: Dependency
+    
+    init(dependency: Dependency? = unforceInject()) {
+        self.dependency = dependency
     }
 }
 ```

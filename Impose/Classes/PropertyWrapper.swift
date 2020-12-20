@@ -15,3 +15,12 @@ public struct Injected<T> {
         self.rules = rules
     }
 }
+
+@propertyWrapper
+public struct UnforceInjected<T> {
+    public lazy var wrappedValue: T? = unforceInject(ifNoMatchUse: rules)
+    let rules: InjectionRules
+    public init(ifNoMatchUse rules: InjectionRules = .nearestType) {
+        self.rules = rules
+    }
+}
