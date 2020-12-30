@@ -23,7 +23,7 @@ pod 'Impose'
 
 ## Author
 
-Nayanda Habertyy, nayanda1@outlook.com
+Nayanda Haberty, nayanda1@outlook.com
 
 ## License
 
