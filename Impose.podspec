@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Impose'
-  s.version          = '0.1.1'
+  s.version          = '1.0.0'
   s.summary          = 'Simple dependency injection library for Swift.'
 
 # This description is used to generate tags and improve search results.
