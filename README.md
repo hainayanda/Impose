@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="175" height="192" src="Impose.png"/>
+</p>
+
 # Impose
 
 Impose is a simple dependency injection library for Swift
