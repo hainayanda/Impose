@@ -31,7 +31,7 @@ Nayanda Haberty, nayanda1@outlook.com
 
 ## License
 
-Impose is available under the MIT license. See the LICENSE file for more info.
+Impose is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
 
 ## Basic Usage
 
