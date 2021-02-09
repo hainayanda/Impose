@@ -62,6 +62,8 @@ public class Imposer {
             guard provider.isProvider(of: T.self) else {
                 if provider.isPotentialProvider(of: T.self) {
                     potentialProviders.append(provider)
+                } else if provider.castableTo(type: T.self) {
+                    potentialProviders.append(provider)
                 }
                 continue
             }
@@ -86,6 +88,8 @@ public class Imposer {
         for provider in providers {
             guard provider.isProvider(of: T.self) else {
                 if provider.isPotentialProvider(of: T.self) {
+                    potentialProviders.append(provider)
+                } else if provider.castableTo(type: T.self) {
                     potentialProviders.append(provider)
                 }
                 continue

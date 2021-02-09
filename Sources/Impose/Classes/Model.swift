@@ -10,6 +10,7 @@ import Foundation
 protocol Provider {
     func canBeProvided(by otherProvider: Provider) -> Bool
     func isProvider<TypeToProvide>(of anyType: TypeToProvide.Type) -> Bool
+    func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool
     func isPotentialProvider(of anyType: Any.Type) -> Bool
     func isSameType(of anyType: Any.Type) -> Bool
     func getInstance() -> Any
@@ -30,6 +31,10 @@ class InjectProvider<T>: Provider {
     
     func isProvider<TypeToProvide>(of anyType: TypeToProvide.Type) -> Bool {
         T.self is TypeToProvide.Type
+    }
+    
+    func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool {
+        providedInstance as? TypeToProvide != nil
     }
     
     func isPotentialProvider(of anyType: Any.Type) -> Bool {
