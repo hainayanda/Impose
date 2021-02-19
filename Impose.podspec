@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '10.0'
 
-  s.source_files = 'Sources/Impose/Classes/**/*'
+  s.source_files = 'Impose/Classes/**/*'
   
   # s.resource_bundles = {
   #   'Impose' => ['Impose/Assets/*.png']
