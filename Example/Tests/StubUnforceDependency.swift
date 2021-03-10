@@ -19,11 +19,11 @@ public class WrappedUnforceInject {
 }
 
 public class OtherWrappedUnforceInject {
-    @UnforceInjected(ifNoMatchUse: .furthestType)
+    @UnforceInjected(ifNoMatchUse: .furthest)
     var dependency: Dependency?
-    @UnforceInjected(ifNoMatchUse: .furthestType)
+    @UnforceInjected(ifNoMatchUse: .furthest)
     var someDependency: SomeDependency?
-    @UnforceInjected(ifNoMatchUse: .furthestType)
+    @UnforceInjected(ifNoMatchUse: .furthest)
     var someOtherUpperDependency: SomeOtherUpperDependency?
 }
 
@@ -33,7 +33,7 @@ public class InitUnforceInject {
     var someDependency: SomeDependency?
     var someOtherDependency: SomeOtherDependency?
     
-    init(dependency: Dependency? = try? tryInject(),
+    init(dependency: Dependency? = try? tryInject(of: Dependency.self),
          someDependency: SomeDependency? = unforceInject(of: SomeDependency.self),
          someOtherDependency: SomeOtherDependency? = try? tryInject(of: SomeOtherDependency.self)) {
         self.dependency = dependency
@@ -48,9 +48,9 @@ public class OtherInitUnforceInject {
     var someDependency: SomeDependency?
     var someOtherUpperDependency: SomeOtherUpperDependency?
     
-    init(dependency: Dependency? = try? tryInject(ifNoMatchUse: .furthestType),
-         someDependency: SomeDependency? = unforceInject(of: SomeDependency.self, ifNoMatchUse: .furthestType),
-         someOtherUpperDependency: SomeOtherUpperDependency? = try? tryInject(of: SomeOtherUpperDependency.self, ifNoMatchUse: .furthestType)) {
+    init(dependency: Dependency? = unforceInject(ifNoMatchUse: .furthest),
+         someDependency: SomeDependency? = unforceInject(ifNoMatchUse: .furthest),
+         someOtherUpperDependency: SomeOtherUpperDependency? = unforceInject(ifNoMatchUse: .furthest)) {
         self.dependency = dependency
         self.someDependency = someDependency
         self.someOtherUpperDependency = someOtherUpperDependency
