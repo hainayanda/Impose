@@ -14,16 +14,16 @@ protocol Provider {
     func isPotentialProvider(of anyType: Any.Type) -> Bool
     func isSameType(of anyType: Any.Type) -> Bool
     func getInstance() -> Any
+    func asProvider<TypeToProvide>(for anyType: TypeToProvide.Type) -> Provider
 }
 
-class InjectProvider<T>: Provider {
-    var provider: () -> T
-    lazy var providedInstance: T = provider()
-    var option: InjectOption
-    init(option: InjectOption, _ provider: @escaping () -> T) {
-        self.provider = provider
-        self.option = option
+extension Provider {
+    func asProvider<TypeToProvide>(for anyType: TypeToProvide.Type) -> Provider {
+        ReferenceProvider(realProvider: self, for: TypeToProvide.self)
     }
+}
+
+class BaseProvider<T>: Provider {
     
     func canBeProvided(by otherProvider: Provider) -> Bool {
         otherProvider.isProvider(of: T.self)
@@ -34,7 +34,7 @@ class InjectProvider<T>: Provider {
     }
     
     func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool {
-        providedInstance as? TypeToProvide != nil
+        fatalError("get castableTo should be overridden")
     }
     
     func isPotentialProvider(of anyType: Any.Type) -> Bool {
@@ -46,12 +46,47 @@ class InjectProvider<T>: Provider {
     }
     
     func getInstance() -> Any {
+        fatalError("get instance should be overridden")
+    }
+}
+
+class InjectProvider<T>: BaseProvider<T> {
+    
+    var provider: () -> T
+    lazy var providedInstance: T = provider()
+    var option: InjectOption
+    init(option: InjectOption, _ provider: @escaping () -> T) {
+        self.provider = provider
+        self.option = option
+    }
+    
+    override func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool {
+        providedInstance as? TypeToProvide != nil
+    }
+    
+    override func getInstance() -> Any {
         switch option {
         case .singleInstance:
             return providedInstance
         default:
             return provider()
         }
+    }
+}
+
+class ReferenceProvider<T>: BaseProvider<T> {
+    var realProvider: Provider
+    
+    init(realProvider: Provider, for type: T.Type) {
+        self.realProvider = realProvider
+    }
+    
+    override func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool {
+        realProvider.castableTo(type: type)
+    }
+    
+    override func getInstance() -> Any {
+        realProvider.getInstance()
     }
 }
 
