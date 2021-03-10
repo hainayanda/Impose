@@ -14,8 +14,13 @@ Impose is a simple dependency injection library for Swift
 
 ## Requirements
 
-- Swift 5.0 or higher
-- iOS 9.3 or higher
+- Swift 5.0 or higher (or 5.3 when using Swift Package Manager)
+- iOS 9.3 or higher (or 10 when using Swift Package Manager)
+
+### Only Swift Package Manager
+
+- macOS 10.10 or higher
+- tvOS 10 or higher
 
 ## Installation
 
@@ -27,17 +32,31 @@ Impose is available through [CocoaPods](https://cocoapods.org). To install it, s
 pod 'Impose'
 ```
 
-### Swift Package Manager
+### Swift Package Manager from XCode
 
-First, create a Package.swift file and add this github url. It should look like:
+- Add it using xcode menu **File > Swift Package > Add Package Dependency**
+- Add **https://github.com/nayanda1/Impose.git** as Swift Package url
+- Set rules at **version**, with **Up to Next Major** option and put **1.2.0** as its version
+- Click next and wait
+
+### Swift Package Manager from Package.swift
+
+Add as your target dependency in **Package.swift**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nayanda1/Impose.git", from: "1.2.0")
+    .package(url: "https://github.com/nayanda1/Impose.git", .upToNextMajor(from: "1.2.0"))
 ]
 ```
 
-Then run swift build to build the dependency before you use it
+Use it in your target as `Impose`
+
+```swift
+ .target(
+    name: "MyModule",
+    dependencies: ["Impose"]
+)
+```
 
 ## Author
 
@@ -203,16 +222,16 @@ If you prefer the furthest type registered, then you can pass rules into propert
 
 ```swift
 class InjectedByPropertyWrapper {
-    @Injected(ifNoMatchUse: .furthestType) 
+    @Injected(ifNoMatchUse: .furthest) 
     var thisWillBeMyDependency: Dependency
     
-    @Injected(ifNoMatchUse: .furthestType) 
+    @Injected(ifNoMatchUse: .furthest) 
     var thisWillBeOurDependency: MyDependency
     
-    @Injected(ifNoMatchUse: .furthestType) 
+    @Injected(ifNoMatchUse: .furthest) 
     var thisWillBeYourDependency: YourDependency
     
-    @Injected(ifNoMatchUse: .furthestType) 
+    @Injected(ifNoMatchUse: .furthest) 
     var thisWillBeOurDependencyToo: OurDependency
     
     ...
@@ -226,10 +245,10 @@ class InjectedByInit {
     var thisWillBeYourDependency: YourDependency
     var thisWillBeOurDependencyToo: OurDependency
     
-    init(thisWillBeMyDependency: Dependency = inject(ifNoMatchUse: .furthestType),
-         thisWillBeOurDependency: MyDependency = inject(ifNoMatchUse: .furthestType),
-         thisWillBeYourDependency: YourDependency = inject(ifNoMatchUse: .furthestType),
-         thisWillBeOurDependencyToo: OurDependency = inject(ifNoMatchUse: .furthestType)) {
+    init(thisWillBeMyDependency: Dependency = inject(ifNoMatchUse: .furthest),
+         thisWillBeOurDependency: MyDependency = inject(ifNoMatchUse: .furthest),
+         thisWillBeYourDependency: YourDependency = inject(ifNoMatchUse: .furthest),
+         thisWillBeOurDependencyToo: OurDependency = inject(ifNoMatchUse: .furthest)) {
         self.thisWillBeMyDependency = thisWillBeMyDependency
         self.thisWillBeOurDependency = thisWillBeOurDependency
         self.thisWillBeYourDependency = thisWillBeYourDependency
@@ -237,3 +256,7 @@ class InjectedByInit {
     }
 }
 ```
+
+### Using Casting
+
+Sometimes even if you are using no match rules there will be some time that the dependency did not found. You could always tell Imposer to try casting dependency if there are no match at all. Simply pass `furthestAndCastable` or `nearestAndCastable` as no match rules, then it will try to cast the dependency into the one you needed if there's no match.

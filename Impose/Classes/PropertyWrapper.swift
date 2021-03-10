@@ -15,7 +15,7 @@ public struct Injected<T> {
     
     /// Default init
     /// - Parameter rules: rules to search type when same type is not found
-    public init(ifNoMatchUse rules: InjectionRules = .nearestType) {
+    public init(ifNoMatchUse rules: InjectionRules = .nearest) {
         self.rules = rules
     }
 }
@@ -28,7 +28,7 @@ public struct UnforceInjected<T> {
     
     /// Default init
     /// - Parameter rules: rules to search type when same type is not found
-    public init(ifNoMatchUse rules: InjectionRules = .nearestType) {
+    public init(ifNoMatchUse rules: InjectionRules = .nearest) {
         self.rules = rules
     }
 }

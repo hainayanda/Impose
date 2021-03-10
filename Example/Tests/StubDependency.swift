@@ -19,11 +19,11 @@ public class WrappedInject {
 }
 
 public class OtherWrappedInject {
-    @Injected(ifNoMatchUse: .furthestType)
+    @Injected(ifNoMatchUse: .furthest)
     var dependency: Dependency
-    @Injected(ifNoMatchUse: .furthestType)
+    @Injected(ifNoMatchUse: .furthest)
     var someDependency: SomeDependency
-    @Injected(ifNoMatchUse: .furthestType)
+    @Injected(ifNoMatchUse: .furthest)
     var someOtherUpperDependency: SomeOtherUpperDependency
 }
 
@@ -48,9 +48,9 @@ public class OtherInitInject {
     var someDependency: SomeDependency
     var someOtherUpperDependency: SomeOtherUpperDependency
     
-    init(dependency: Dependency = inject(ifNoMatchUse: .furthestType),
-         someDependency: SomeDependency = inject(of: SomeDependency.self, ifNoMatchUse: .furthestType),
-         someOtherUpperDependency: SomeOtherUpperDependency = inject(ifNoMatchUse: .furthestType)) {
+    init(dependency: Dependency = inject(ifNoMatchUse: .furthest),
+         someDependency: SomeDependency = inject(of: SomeDependency.self, ifNoMatchUse: .furthest),
+         someOtherUpperDependency: SomeOtherUpperDependency = inject(ifNoMatchUse: .furthest)) {
         self.dependency = dependency
         self.someDependency = someDependency
         self.someOtherUpperDependency = someOtherUpperDependency

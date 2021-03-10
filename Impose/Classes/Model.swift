@@ -47,7 +47,7 @@ class InjectProvider<T>: Provider {
     
     func getInstance() -> Any {
         switch option {
-        case .singleton:
+        case .singleInstance:
             return providedInstance
         default:
             return provider()
@@ -71,17 +71,21 @@ public struct ImposeError: LocalizedError {
 }
 
 /// Inject option
-/// singleton means the instance is only created once
-/// alwaysNew means the instance is created everytime needed
+/// singleInstance means the closure is only called once
+/// closureBased means the instance is always coming from closure
 public enum InjectOption {
-    case singleton
-    case alwaysNew
+    case singleInstance
+    case closureBased
 }
 
 /// Injection rules
-/// nearestType which means return nearest type requested
-/// furthestType which means return furthest type requested
+/// nearest which means return nearest type requested
+/// furthest which means return furthest type requested
+/// nearestAndCastable which means return nearest type requested and using type casting
+/// furthestAndCastable which means return furthest type requested and using type casting
 public enum InjectionRules {
-    case nearestType
-    case furthestType
+    case nearest
+    case furthest
+    case nearestAndCastable
+    case furthestAndCastable
 }
