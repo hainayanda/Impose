@@ -12,7 +12,6 @@ protocol Provider {
     func isProvider<TypeToProvide>(of anyType: TypeToProvide.Type) -> Bool
     func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool
     func isPotentialProvider(of anyType: Any.Type) -> Bool
-    func isSameType(of anyType: Any.Type) -> Bool
     func getInstance() -> Any
     func asProvider<TypeToProvide>(for anyType: TypeToProvide.Type) -> Provider
 }
@@ -39,10 +38,6 @@ class BaseProvider<T>: Provider {
     
     func isPotentialProvider(of anyType: Any.Type) -> Bool {
         anyType is T.Type
-    }
-    
-    func isSameType(of anyType: Any.Type) -> Bool {
-        anyType == T.self
     }
     
     func getInstance() -> Any {

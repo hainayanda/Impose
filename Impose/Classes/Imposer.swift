@@ -71,10 +71,8 @@ public class Imposer {
             guard let instance: T = provider.getInstance() as? T else {
                 continue
             }
-            if !provider.isSameType(of: anyType) {
-                let identifier = ObjectIdentifier(anyType)
-                self.providers[identifier] = provider.asProvider(for: anyType)
-            }
+            let identifier = ObjectIdentifier(anyType)
+            self.providers[identifier] = provider.asProvider(for: anyType)
             return instance
         }
         throw ImposeError(
