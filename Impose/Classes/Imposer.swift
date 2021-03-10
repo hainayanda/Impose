@@ -20,9 +20,19 @@ public class Imposer {
     ///   - anyType: Type of instance
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
-    public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleton,_ provider: @escaping @autoclosure () -> T) {
+    public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
         shared.providers.removeAll { $0.isSameType(of: anyType) }
         shared.providers.append(InjectProvider(option: option, provider))
+    }
+    
+    /// Static function to provide assosiated dependency for some Type
+    /// - Parameters:
+    ///   - anyType: Type of instance
+    ///   - option: Option of how to provide the dependency
+    ///   - provider: The provider
+    public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
+        shared.providers.removeAll { $0.isSameType(of: anyType) }
+        shared.providers.append(InjectProvider(option: option, closureProvider))
     }
     
     /// Function to provide assosiated dependency for some Type
@@ -30,18 +40,28 @@ public class Imposer {
     ///   - anyType: Type of instance
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
-    public func impose<T>(for anyType: T.Type, option: InjectOption = .singleton,_ provider: @escaping @autoclosure () -> T) {
+    public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
         providers.removeAll { $0.isSameType(of: anyType) }
         providers.append(InjectProvider(option: option, provider))
     }
     
-    func imposedInstance<T>(of anyType: T.Type, ifNoMatchUse rules: InjectionRules = .nearestType) throws -> T {
+    /// Function to provide assosiated dependency for some Type
+    /// - Parameters:
+    ///   - anyType: Type of instance
+    ///   - option: Option of how to provide the dependency
+    ///   - provider: The provider
+    public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
+        providers.removeAll { $0.isSameType(of: anyType) }
+        providers.append(InjectProvider(option: option, closureProvider))
+    }
+    
+    func imposedInstance<T>(of anyType: T.Type, ifNoMatchUse rules: InjectionRules = .nearest) throws -> T {
         let providers: [Provider]
         switch rules {
-        case .furthestType:
-            providers = try furthestImposed(of: anyType)
-        default:
-            providers = try nearestImposed(of: anyType)
+        case .furthest, .furthestAndCastable:
+            providers = try furthestImposed(of: anyType, useCasting: rules == .furthestAndCastable)
+        case .nearest, .nearestAndCastable:
+            providers = try nearestImposed(of: anyType, useCasting: rules == .furthestAndCastable)
         }
         for provider in providers {
             guard let instance: T = provider.getInstance() as? T else {
@@ -55,14 +75,14 @@ public class Imposer {
         )
     }
     
-    func nearestImposed<T>(of anyType: T.Type) throws -> [Provider] {
+    func nearestImposed<T>(of anyType: T.Type, useCasting: Bool) throws -> [Provider] {
         var potentialProviders: [Provider] = []
         var nearest: Provider?
         for provider in providers {
             guard provider.isProvider(of: T.self) else {
                 if provider.isPotentialProvider(of: T.self) {
                     potentialProviders.append(provider)
-                } else if provider.castableTo(type: T.self) {
+                } else if useCasting, provider.castableTo(type: T.self) {
                     potentialProviders.append(provider)
                 }
                 continue
@@ -82,14 +102,14 @@ public class Imposer {
         return [provider]
     }
     
-    func furthestImposed<T>(of anyType: T.Type) throws -> [Provider] {
+    func furthestImposed<T>(of anyType: T.Type, useCasting: Bool) throws -> [Provider] {
         var potentialProviders: [Provider] = []
         var furthest: Provider?
         for provider in providers {
             guard provider.isProvider(of: T.self) else {
                 if provider.isPotentialProvider(of: T.self) {
                     potentialProviders.append(provider)
-                } else if provider.castableTo(type: T.self) {
+                } else if useCasting, provider.castableTo(type: T.self) {
                     potentialProviders.append(provider)
                 }
                 continue
