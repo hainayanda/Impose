@@ -33,8 +33,8 @@ public class InitUnforceInject {
     var someDependency: SomeDependency?
     var someOtherDependency: SomeOtherDependency?
     
-    init(dependency: Dependency? = try? tryInject(of: Dependency.self),
-         someDependency: SomeDependency? = unforceInject(of: SomeDependency.self),
+    init(dependency: Dependency? = try? tryInject(),
+         someDependency: SomeDependency? = unforceInject(),
          someOtherDependency: SomeOtherDependency? = try? tryInject(of: SomeOtherDependency.self)) {
         self.dependency = dependency
         self.someDependency = someDependency
