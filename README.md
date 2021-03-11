@@ -103,7 +103,7 @@ Imposer.impose(for: Dependency.self) {
 }
 ```
 
-the provider automatically just create one instance only (singleton). If you want the provider to create new instance for every injection, you can just pass option:
+the provider automatically just create one instance only from calling closure and reused the instance, so the closure only called once. If you want the provider to call closure for every injection, you can just pass option:
 
 ```swift
 Imposer.impose(for: Dependency.self, option: .closureBased, SomeDependency())
