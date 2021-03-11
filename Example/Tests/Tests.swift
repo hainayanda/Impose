@@ -67,6 +67,7 @@ class TableOfContentsSpec: QuickSpec {
         describe("negative test") {
             beforeEach {
                 Imposer.shared.providers.removeAll()
+                Imposer.shared.clearCached()
             }
             it("should error") {
                 expect({ try Imposer.shared.imposedInstance(of: Dependency.self) }).to(throwError())
