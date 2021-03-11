@@ -109,7 +109,7 @@ the provider automatically just create one instance only from calling closure an
 Imposer.impose(for: Dependency.self, option: .closureBased, SomeDependency())
 ```
 
-or if you want to set it to singleton explicitly:
+or if you want to set it to single instance explicitly:
 
 ```swift
 Imposer.impose(for: Dependency.self, option: .singleInstance, SomeDependency())
