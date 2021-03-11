@@ -106,13 +106,13 @@ Imposer.impose(for: Dependency.self) {
 the provider automatically just create one instance only (singleton). If you want the provider to create new instance for every injection, you can just pass option:
 
 ```swift
-Imposer.impose(for: Dependency.self, option: .alwaysNew, SomeDependency())
+Imposer.impose(for: Dependency.self, option: .closureBased, SomeDependency())
 ```
 
 or if you want to set it to singleton explicitly:
 
 ```swift
-Imposer.impose(for: Dependency.self, option: .singleton, SomeDependency())
+Imposer.impose(for: Dependency.self, option: .singleInstance, SomeDependency())
 ```
 
 Don't forget that it will throw uncatchable Error if the provider is not registered yet. If you want to catch the error manually, just use `tryInject` instead:
