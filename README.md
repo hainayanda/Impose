@@ -155,7 +155,7 @@ class InjectedByInit {
 
 ## No Match Rules
 
-If the Imposer did not found exact type registered but multiple compatible type, it will use the nearest one to the requested type.
+If the Imposer did not found exact type registered but multiple compatible type, it will use the nearest one to the requested type. Like in this example:
 
 ```swift
 protocol Dependency {
@@ -163,100 +163,62 @@ protocol Dependency {
     ...
 }
 
-class MyDependency: Dependency {
+class NearestToDependency: Dependency {
     ...
     ...
 }
 
-class YourDependency: MyDependency {
+class MidwayToDependency: MyDependency {
     ...
     ...
 }
 
-class OurDependency: YourDependency {
+class FurthestToDependency: YourDependency {
     ...
     ...
 }
 ```
 
-and you register your dependency like this:
+so if you provide dependency like this:
 
 ```swift
-Imposer.impose(for: Dependency.self, MyDependency())
-Imposer.impose(for: YourDependency.self, YourDependency())
-Imposer.impose(for: OurDependency.self, OurDependency())
+Imposed.impose(for: NearestToDependency.self, NearestToDependency())
+Imposed.impose(for: MidwayToDependency.self, MidwayToDependency())
+Imposed.impose(for: FurthestToDependency.self, FurthestToDependency())
 ```
-then the result will be:
+
+and you try to get injected `Dependency` protocol which Imposer already have three candidate for that, by default Imposer will return `NearestToDependency` since its the nearest one to `Dependency`:
 
 ```swift
-class InjectedByPropertyWrapper {
-    @Injected var thisWillBeMyDependency: Dependency
-    @Injected var thisWillBeYourDependency: MyDependency
-    @Injected var thisWillBeYourDependencyToo: YourDependency
-    @Injected var thisWillBeOurDependency: OurDependency
-    
-    ...
-    ...
-}
-
-
-class InjectedByInit {
-    var thisWillBeMyDependency: Dependency
-    var thisWillBeYourDependency: MyDependency
-    var thisWillBeYourDependencyToo: YourDependency
-    var thisWillBeOurDependency: OurDependency
-    
-    init(thisWillBeMyDependency: Dependency = inject(),
-         thisWillBeYourDependency: MyDependency = inject(),
-         thisWillBeYourDependencyToo: YourDependency = inject(),
-         thisWillBeOurDependency: OurDependency = inject()) {
-        self.thisWillBeMyDependency = thisWillBeMyDependency
-        self.thisWillBeYourDependency = thisWillBeYourDependency
-        self.thisWillBeYourDependencyToo = thisWillBeYourDependencyToo
-        self.thisWillBeOurDependency = thisWillBeOurDependency
-    }
+class MyClass {
+    // this will be NearestToDependency
+    @Injected var dependency: Dependency
 }
 ```
 
-If you prefer the furthest type registered, then you can pass rules into propertyWrapper or inject function like this:
+but if you want to get other dependency, you could pass `InjectionRules`:
+- **nearest** which will return the nearest one found
+- **furthest** which will return the furthest one found
+- **nearestAndCastable** same like nearest, but will using type casting too when searching dependency
+- **furthestAndCastable** same like furthest, but will using type casting too when searching dependency
+
 
 ```swift
-class InjectedByPropertyWrapper {
-    @Injected(ifNoMatchUse: .furthest) 
-    var thisWillBeMyDependency: Dependency
+class MyClass {
+    // this will be NearestToDependency
+    @Injected var dependency: Dependency
     
-    @Injected(ifNoMatchUse: .furthest) 
-    var thisWillBeOurDependency: MyDependency
-    
-    @Injected(ifNoMatchUse: .furthest) 
-    var thisWillBeYourDependency: YourDependency
-    
-    @Injected(ifNoMatchUse: .furthest) 
-    var thisWillBeOurDependencyToo: OurDependency
-    
-    ...
-    ...
-}
-
-
-class InjectedByInit {
-    var thisWillBeMyDependency: Dependency
-    var thisWillBeOurDependency: MyDependency
-    var thisWillBeYourDependency: YourDependency
-    var thisWillBeOurDependencyToo: OurDependency
-    
-    init(thisWillBeMyDependency: Dependency = inject(ifNoMatchUse: .furthest),
-         thisWillBeOurDependency: MyDependency = inject(ifNoMatchUse: .furthest),
-         thisWillBeYourDependency: YourDependency = inject(ifNoMatchUse: .furthest),
-         thisWillBeOurDependencyToo: OurDependency = inject(ifNoMatchUse: .furthest)) {
-        self.thisWillBeMyDependency = thisWillBeMyDependency
-        self.thisWillBeOurDependency = thisWillBeOurDependency
-        self.thisWillBeYourDependency = thisWillBeYourDependency
-        self.thisWillBeOurDependencyToo = thisWillBeOurDependencyToo
-    }
+    // this will be FurthestToDependency
+    @Injected(ifNoMatchUse: .furthest) var furthestDependency: Dependency
 }
 ```
 
-### Using Casting
+it can apply to the inject function too:
 
-Sometimes even if you are using no match rules there will be some time that the dependency did not found. You could always tell Imposer to try casting dependency if there are no match at all. Simply pass `furthestAndCastable` or `nearestAndCastable` as no match rules, then it will try to cast the dependency into the one you needed if there's no match.
+```swift
+// this will be NearestToDependency
+var dependency: Dependency = inject()
+
+// this will be FurthestToDependency
+var furthestDependency: Dependency = inject(ifNoMatchUse: .furthest)
+```
