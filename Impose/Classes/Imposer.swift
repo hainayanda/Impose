@@ -13,7 +13,11 @@ public class Imposer {
     /// shared instance of Imposer
     public static var shared: Imposer = .init()
     
-    var providers: [ObjectIdentifier: Provider] = [:]
+    var providers: ProviderMap = .init()
+    var cachedNearest: ProviderMap = .init()
+    var cachedFurthest: ProviderMap = .init()
+    var cachedNearestCastable: ProviderMap = .init()
+    var cachedFurthestCastable: ProviderMap = .init()
     
     /// Static function to provide assosiated dependency for some Type
     /// - Parameters:
@@ -21,8 +25,8 @@ public class Imposer {
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
     public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
-        let identifier = ObjectIdentifier(anyType)
-        shared.providers[identifier] = InjectProvider(option: option, provider)
+        shared.impose(for: anyType, option: option, provider)
+        
     }
     
     /// Static function to provide assosiated dependency for some Type
@@ -31,8 +35,7 @@ public class Imposer {
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
     public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
-        let identifier = ObjectIdentifier(anyType)
-        shared.providers[identifier] = InjectProvider(option: option, closureProvider)
+        shared.impose(for: anyType, option: option, closureProvider)
     }
     
     /// Function to provide assosiated dependency for some Type
@@ -41,8 +44,8 @@ public class Imposer {
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
     public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
-        let identifier = ObjectIdentifier(anyType)
-        providers[identifier] = InjectProvider(option: option, provider)
+        providers.add(provider: InjectProvider(option: option, provider), for: anyType, includingOptional: true)
+        clearCached()
     }
     
     /// Function to provide assosiated dependency for some Type
@@ -51,15 +54,52 @@ public class Imposer {
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
     public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
-        let identifier = ObjectIdentifier(anyType)
-        providers[identifier] = InjectProvider(option: option, closureProvider)
+        providers.add(provider: InjectProvider(option: option, closureProvider), for: anyType, includingOptional: true)
+        clearCached()
+    }
+    
+    func clearCached() {
+        cachedNearest.removeAll()
+        cachedFurthest.removeAll()
+        cachedNearestCastable.removeAll()
+        cachedFurthestCastable.removeAll()
+    }
+    
+    func addCached<T>(for rules: InjectionRules, provider: Provider, for type: T.Type) {
+        switch rules {
+        case .nearest:
+            cachedNearest.add(provider: provider, for: type)
+        case .nearestAndCastable:
+            cachedNearest.add(provider: provider, for: type)
+        case .furthest:
+            cachedFurthest.add(provider: provider, for: type)
+        case .furthestAndCastable:
+            cachedFurthestCastable.add(provider: provider, for: type)
+        }
     }
     
     func imposedInstance<T>(of anyType: T.Type, ifNoMatchUse rules: InjectionRules = .nearest) throws -> T {
-        if let provider = self.providers[ObjectIdentifier(anyType)],
-           let instance: T = provider.getInstance() as? T {
-            return instance
+        guard let instance: T = providers.get(for: anyType)?.getInstance() as? T
+                ?? cachedInstance(of: anyType, rules: rules) else {
+            return try compatibleInstance(of: anyType, use: rules)
         }
+        return instance
+    }
+    
+    func cachedInstance<T>(of anyType: T.Type, rules: InjectionRules) -> T? {
+        switch rules {
+        case .nearest:
+            return cachedNearest.get(for: anyType)?.getInstance() as? T
+        case .nearestAndCastable:
+            return cachedNearestCastable.get(for: anyType)?.getInstance() as? T
+        case .furthest:
+            return cachedFurthest.get(for: anyType)?.getInstance() as? T
+        case .furthestAndCastable:
+            return cachedFurthestCastable.get(for: anyType)?.getInstance() as? T
+        }
+    }
+    
+    func compatibleInstance<T>(of anyType: T.Type, use rules: InjectionRules) throws -> T {
         let providers: [Provider]
         switch rules {
         case .furthest, .furthestAndCastable:
@@ -71,8 +111,7 @@ public class Imposer {
             guard let instance: T = provider.getInstance() as? T else {
                 continue
             }
-            let identifier = ObjectIdentifier(anyType)
-            self.providers[identifier] = provider.asProvider(for: anyType)
+            addCached(for: rules, provider: provider, for: T.self)
             return instance
         }
         throw ImposeError(
@@ -128,4 +167,30 @@ public class Imposer {
         }
         return [provider]
     }
+}
+
+typealias ProviderMap = Dictionary<ObjectIdentifier, Provider>
+
+extension Dictionary where Key == ObjectIdentifier, Value == Provider {
+    
+    func get<T>(for type: T.Type) -> Provider? {
+        let identifier = ObjectIdentifier(type)
+        return self[identifier]
+    }
+    
+    mutating func add<T>(provider: Provider, for type: T.Type, includingOptional: Bool = false) {
+        self[provider.identifier] = provider
+        if includingOptional {
+            let optionalProvider = provider.asProvider(for: T?.self)
+            self[optionalProvider.identifier] = optionalProvider
+        }
+        clearInvalidProviders()
+    }
+    
+    mutating func clearInvalidProviders() {
+        for (key, provider) in self where !provider.isValid {
+            self.removeValue(forKey: key)
+        }
+    }
+    
 }
