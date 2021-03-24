@@ -45,7 +45,7 @@ Add as your target dependency in **Package.swift**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nayanda1/Impose.git", .upToNextMajor(from: "1.2.0"))
+    .package(url: "https://github.com/nayanda1/Impose.git", .upToNextMajor(from: "1.2.3"))
 ]
 ```
 
