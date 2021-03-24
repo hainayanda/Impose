@@ -51,30 +51,49 @@ class BaseProvider<T>: Provider {
     }
 }
 
-class InjectProvider<T>: BaseProvider<T> {
+class StorageBasedProvider<T>: BaseProvider<T> {
     
-    var provider: () -> T
-    lazy var providedInstance: T = provider()
-    var option: InjectOption
+    var provider: (() -> T)?
+    lazy var providedInstance: T = getInstanceAndRemoveRetain()
     
     override var isValid: Bool { true }
     
-    init(option: InjectOption, _ provider: @escaping () -> T) {
+    init(_ provider: @escaping () -> T) {
         self.provider = provider
-        self.option = option
     }
     
     override func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool {
         providedInstance as? TypeToProvide != nil
     }
     
-    override func getInstance() -> Any {
-        switch option {
-        case .singleInstance:
-            return providedInstance
-        default:
-            return provider()
+    func getInstanceAndRemoveRetain() -> T {
+        defer {
+            provider = nil
         }
+        return provider!()
+    }
+    
+    override func getInstance() -> Any {
+        return providedInstance
+    }
+}
+
+class ClosureBasedProvider<T>: BaseProvider<T> {
+    
+    var provider: () -> T
+    
+    override var isValid: Bool { true }
+    
+    init(_ provider: @escaping () -> T) {
+        self.provider = provider
+    }
+    
+    override func castableTo<TypeToProvide>(type: TypeToProvide.Type) -> Bool {
+        provider() as? TypeToProvide != nil
+    }
+    
+    override func getInstance() -> Any {
+        return provider()
     }
 }
 
