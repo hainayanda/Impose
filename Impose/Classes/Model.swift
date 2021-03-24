@@ -28,6 +28,15 @@ public struct ImposeError: LocalizedError {
 public enum InjectOption {
     case singleInstance
     case closureBased
+    
+    func createProvider<T>(_ provider: @escaping () -> T) -> Provider {
+        switch self {
+        case .closureBased:
+            return ClosureBasedProvider(provider)
+        case .singleInstance:
+            return StorageBasedProvider(provider)
+        }
+    }
 }
 
 /// Injection rules
@@ -40,4 +49,13 @@ public enum InjectionRules {
     case furthest
     case nearestAndCastable
     case furthestAndCastable
+    
+    var useCasting: Bool {
+        switch self {
+        case .nearest, .furthest:
+            return false
+        case .furthestAndCastable, .nearestAndCastable:
+            return true
+        }
+    }
 }
