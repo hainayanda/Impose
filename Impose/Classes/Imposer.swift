@@ -44,7 +44,7 @@ public class Imposer {
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
     public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
-        providers.add(provider: InjectProvider(option: option, provider), for: anyType, includingOptional: true)
+        providers.add(provider: option.createProvider(provider), for: anyType, includingOptional: true)
         clearCached()
     }
     
@@ -54,7 +54,7 @@ public class Imposer {
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
     public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
-        providers.add(provider: InjectProvider(option: option, closureProvider), for: anyType, includingOptional: true)
+        providers.add(provider: option.createProvider(closureProvider), for: anyType, includingOptional: true)
         clearCached()
     }
     
@@ -103,9 +103,9 @@ public class Imposer {
         let providers: [Provider]
         switch rules {
         case .furthest, .furthestAndCastable:
-            providers = try furthestImposed(of: anyType, useCasting: rules == .furthestAndCastable)
+            providers = try furthestImposed(of: anyType, useCasting: rules.useCasting)
         case .nearest, .nearestAndCastable:
-            providers = try nearestImposed(of: anyType, useCasting: rules == .furthestAndCastable)
+            providers = try nearestImposed(of: anyType, useCasting: rules.useCasting)
         }
         for provider in providers {
             guard let instance: T = provider.getInstance() as? T else {
