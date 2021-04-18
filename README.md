@@ -136,7 +136,6 @@ class InjectedByInit {
 Sometimes you just don't want your app to be throwing error because of failure in dependency injection. At those cases, just use `@UnforceInjected` attribute or `unforceInject` function. It will return nil if injection fail:
 
 ```swift
-```swift
 class InjectedByPropertyWrapper {
     @UnforceInjected var dependency: Dependency?
     
