@@ -133,7 +133,7 @@ class InjectedByInit {
 
 ## Optional Inject
 
-Sometimes you just don't want your app to be throwing error because of failure in dependency injection. At those cases, just use `@UnforceInjected` attribute or `unforceInject` function. It will return nil if injection fail:
+Sometimes you just don't want your app to be throwing error just because its failing in dependency injection. At those cases, just use `@UnforceInjected` attribute or `unforceInject` function. It will return nil if injection fail:
 
 ```swift
 class InjectedByPropertyWrapper {
@@ -167,12 +167,12 @@ class NearestToDependency: Dependency {
     ...
 }
 
-class MidwayToDependency: MyDependency {
+class MidwayToDependency: NearestToDependency {
     ...
     ...
 }
 
-class FurthestToDependency: YourDependency {
+class FurthestToDependency: MidwayToDependency {
     ...
     ...
 }
@@ -186,7 +186,7 @@ Imposed.impose(for: MidwayToDependency.self, MidwayToDependency())
 Imposed.impose(for: FurthestToDependency.self, FurthestToDependency())
 ```
 
-and you try to get injected `Dependency` protocol which Imposer already have three candidate for that, by default Imposer will return `NearestToDependency` since its the nearest one to `Dependency`:
+and you try to inject `Dependency` protocol which Imposer already have three candidate for that, by default Imposer will return `NearestToDependency` since its the nearest one to `Dependency`:
 
 ```swift
 class MyClass {
