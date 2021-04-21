@@ -221,3 +221,43 @@ var dependency: Dependency = inject()
 // this will be FurthestToDependency
 var furthestDependency: Dependency = inject(ifNoMatchUse: .furthest)
 ```
+
+## Multiple Imposer
+
+You could have multiple `Imposer` to provide different dependency for same type by using `ImposerType`.  `ImposerType` is an enumeration to mark the `Imposer`:
+
+- **primary** which is the default Imposer
+- **secondary** which is the secondary Imposer where the Imposer will search if dependency is not present in the primary
+- **custom(AnyHashable)**  which is the optional Imposer where the Imposer will search if dependency is not present in the primary or secondary
+
+To use `ImposerType` other than primary, use static method `imposer(for:)`. It will search the `Imposer` for given type and create new if the `Imposer` did not found:
+
+```swift
+let secondaryImposer = Imposer.imposer(for: .secondary)
+secondaryImposer.impose(for: Dependency.self, SomeDependency())
+```
+
+Then pass the type to propertyWrapper or global function as the first parameter:
+
+```swift
+class InjectedByPropertyWrapper {
+    @Injected(from: .secondary) var dependency: Dependency
+    
+    ...
+    ...
+}
+
+class InjectedByInit {
+    var dependency: Dependency
+    
+    init(dependency: Dependency = inject(from: .secondary)) {
+        self.dependency = dependency
+    }
+}
+```
+
+It will search the dependency from the `Imposer` for the given type and if the dependency is not found, it will try to search from the other available `Imposer` started from primary
+
+## Contribute
+
+You know how, just clone and do pull request

@@ -7,17 +7,36 @@
 
 import Foundation
 
+typealias ImposerCollections = Dictionary<ImposerType, Imposer>
+
 /// Injector class
 public class Imposer {
     
-    /// shared instance of Imposer
-    public static var shared: Imposer = .init()
+    /// shared instance of primary imposer
+    public static var shared: Imposer {
+        imposer(of: .primary)
+    }
+    
+    static var imposers: ImposerCollections = .init()
     
     var providers: ProviderMap = .init()
     var cachedNearest: ProviderMap = .init()
     var cachedFurthest: ProviderMap = .init()
     var cachedNearestCastable: ProviderMap = .init()
     var cachedFurthestCastable: ProviderMap = .init()
+    
+    /// Static function to get imposer of type
+    /// If the imposer of type is not found, it will created a new one and return it
+    /// - Parameter type: type of imposer
+    /// - Returns: Imposer instance
+    public static func imposer(of type: ImposerType) -> Imposer {
+        guard let imposer = imposers[type] else {
+            let imposer = Imposer()
+            imposers[type] = imposer
+            return imposer
+        }
+        return imposer
+    }
     
     /// Static function to provide assosiated dependency for some Type
     /// - Parameters:
