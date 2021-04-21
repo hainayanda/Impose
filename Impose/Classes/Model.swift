@@ -22,6 +22,24 @@ public struct ImposeError: LocalizedError {
     }
 }
 
+/// Imposer type
+public enum ImposerType: Hashable, Comparable {
+    case primary
+    case secondary
+    case custom(AnyHashable)
+    
+    public static func < (lhs: ImposerType, rhs: ImposerType) -> Bool {
+        switch lhs {
+        case .primary:
+            return true
+        case .secondary:
+            return rhs != .primary
+        default:
+            return rhs != .primary && rhs != .secondary
+        }
+    }
+}
+
 /// Inject option
 /// singleInstance means the closure is only called once
 /// closureBased means the instance is always coming from closure
