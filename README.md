@@ -6,6 +6,7 @@
 
 Impose is a simple dependency injection library for Swift
 
+[![codebeat badge](https://codebeat.co/badges/e200329c-321e-432b-8281-beb6d4dc4293)](https://codebeat.co/projects/github-com-nayanda1-impose-main)
 ![build](https://github.com/nayanda1/Impose/workflows/build/badge.svg)
 ![test](https://github.com/nayanda1/Impose/workflows/test/badge.svg)
 [![Version](https://img.shields.io/cocoapods/v/Impose.svg?style=flat)](https://cocoapods.org/pods/Impose)
