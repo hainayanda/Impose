@@ -15,7 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		17BF0E49F6471A8D75AEEA1A /* Impose.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Impose.podspec; path = ../Impose.podspec; sourceTree = "<group>"; };
+		17BF0E49F6471A8D75AEEA1A /* Impose.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Impose.podspec; path = ../Impose.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Impose_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACE51AFB9204008FA782 /* Impose_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Impose_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };

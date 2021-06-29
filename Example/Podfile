@@ -2,6 +2,6 @@ use_frameworks!
 target 'Impose_Tests' do
   pod 'Impose', :path => '../'
   
-  pod 'Quick', '~> 3.0.0'
-  pod 'Nimble', '~> 9.0.0'
+  pod 'Quick', '~> 4.0.0'
+  pod 'Nimble', '~> 9.2.0'
 end
