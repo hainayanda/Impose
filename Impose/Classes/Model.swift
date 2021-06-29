@@ -7,6 +7,19 @@
 
 import Foundation
 
+/// Protocol to provide modular injector
+public protocol ModuleInjector {
+    /// Imposer type
+    var type: ImposerType { get }
+    /// This method will called when this class registered to Imposer
+    /// - Parameter imposer: the imposer
+    func provide(for imposer: Imposer)
+}
+
+public extension ModuleInjector {
+    var type: ImposerType { .primary }
+}
+
 /// Error object generated from Impose
 public struct ImposeError: LocalizedError {
     

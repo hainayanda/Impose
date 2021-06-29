@@ -31,14 +31,14 @@ Impose is a simple dependency injection library for Swift
 Impose is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'Impose'
+pod 'Impose', '~> 1.2'
 ```
 
 ### Swift Package Manager from XCode
 
 - Add it using xcode menu **File > Swift Package > Add Package Dependency**
 - Add **https://github.com/nayanda1/Impose.git** as Swift Package url
-- Set rules at **version**, with **Up to Next Major** option and put **1.2.4** as its version
+- Set rules at **version**, with **Up to Next Major** option and put **1.2.5** as its version
 - Click next and wait
 
 ### Swift Package Manager from Package.swift
@@ -47,7 +47,7 @@ Add as your target dependency in **Package.swift**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nayanda1/Impose.git", .upToNextMajor(from: "1.2.4"))
+    .package(url: "https://github.com/nayanda1/Impose.git", .upToNextMajor(from: "1.2.5"))
 ]
 ```
 
@@ -183,9 +183,9 @@ class FurthestToDependency: MidwayToDependency {
 so if you provide dependency like this:
 
 ```swift
-Imposed.impose(for: NearestToDependency.self, NearestToDependency())
-Imposed.impose(for: MidwayToDependency.self, MidwayToDependency())
-Imposed.impose(for: FurthestToDependency.self, FurthestToDependency())
+Imposer.impose(for: NearestToDependency.self, NearestToDependency())
+Imposer.impose(for: MidwayToDependency.self, MidwayToDependency())
+Imposer.impose(for: FurthestToDependency.self, FurthestToDependency())
 ```
 
 and you try to inject `Dependency` protocol which Imposer already have three candidate for that, by default Imposer will return `NearestToDependency` since its the nearest one to `Dependency`:
@@ -224,6 +224,8 @@ var dependency: Dependency = inject()
 var furthestDependency: Dependency = inject(ifNoMatchUse: .furthest)
 ```
 
+Keep in mind, using `nearestAndCastable` and `furthestAndCastable` will create/using the dependency instance and cast it to Dependency needed, so if the instance injected using one or more Dependencies that circular with itself, it will be raise a stack overflow, so its better avoid it unless you really need it and make sure the dependency is safe.
+
 ## Multiple Imposer
 
 You could have multiple `Imposer` to provide different dependency for same type by using `ImposerType`.  `ImposerType` is an enumeration to mark the `Imposer`:
@@ -259,6 +261,46 @@ class InjectedByInit {
 ```
 
 It will search the dependency from the `Imposer` for the given type and if the dependency is not found, it will try to search from the other available `Imposer` started from primary
+
+## Module Injector
+
+If you have a modular project and wants the individual module to inject everything manually by itself. You can use `ModuleInjector` protocol, and use it as provider in the main module:
+
+```swift
+// this is in MyModule
+class MyModuleInjector: ModuleInjector {
+    var type: ImposerType { .primary }
+    
+    func provide(for imposer: Imposer) {
+        imposer.impose(for: Dependency.self, SomeDependency())
+    }
+}
+```
+
+then lets say in your `AppDelegate`:
+
+```swift
+import Impose
+import MyModule
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    func application(
+            _ application: UIApplication,
+            didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        provideDependencies()
+        // do something
+        return true
+    }
+    
+    func provideDependencies() {
+        Imposer.provide(using: MyModuleInjector())
+    }
+}
+```
+
+It will called `provide(using:)` with primary `Imposer`. type of imposer is optional, the default value is `primary`. You can add as many `ModuleInjector` as you need, but if the Module provide same Dependency for same type of `Imposer`, it will override the previous one with the new one.
 
 ## Contribute
 

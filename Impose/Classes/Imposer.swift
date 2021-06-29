@@ -38,6 +38,14 @@ public class Imposer {
         return imposer
     }
     
+    /// Static function to provide module injector
+    /// It will automatically run module injector provide(for:) with its imposer type
+    /// - Parameter moduleInjector: ModuleInjector
+    public static func provide(using moduleInjector: ModuleInjector) {
+        let imposer: Imposer = Imposer.imposer(of: moduleInjector.type)
+        moduleInjector.provide(for: imposer)
+    }
+    
     /// Static function to provide assosiated dependency for some Type
     /// - Parameters:
     ///   - anyType: Type of instance
