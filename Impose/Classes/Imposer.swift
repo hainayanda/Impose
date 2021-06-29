@@ -42,7 +42,7 @@ public class Imposer {
     /// It will automatically run module injector provide(for:) with its imposer type
     /// - Parameter moduleInjector: ModuleInjector
     public static func provide(using moduleInjector: ModuleInjector) {
-        let imposer = imposer(of: moduleInjector.type)
+        let imposer: Imposer = Imposer.imposer(of: moduleInjector.type)
         moduleInjector.provide(for: imposer)
     }
     
