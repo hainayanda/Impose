@@ -36,8 +36,8 @@ pod 'Impose', '~> 1.2'
 
 ### Swift Package Manager from XCode
 
-- Add it using xcode menu **File > Swift Package > Add Package Dependency**
-- Add **https://github.com/nayanda1/Impose.git** as Swift Package url
+- Add it using XCode menu **File > Swift Package > Add Package Dependency**
+- Add **https://github.com/nayanda1/Impose.git** as Swift Package URL
 - Set rules at **version**, with **Up to Next Major** option and put **1.2.5** as its version
 - Click next and wait
 
@@ -76,7 +76,7 @@ Impose is very easy to use and straightforward, all you need to do is provide so
 Imposer.impose(for: Dependency.self, SomeDependency())
 ```
 
-and then use it in some of your class using property wrapper or using global function
+and then use it in some of your classes using property wrapper or using global function
 
 ```swift
 class InjectedByPropertyWrapper {
@@ -105,19 +105,19 @@ Imposer.impose(for: Dependency.self) {
 }
 ```
 
-the provider automatically just create one instance only from calling closure and reused the instance, so the closure only called once. If you want the provider to call closure for every injection, you can just pass option:
+the provider automatically just create one instance only from calling closure and reused the instance, so the closure only called once. If you want the provider to call closure for every injection, you can just pass the option:
 
 ```swift
 Imposer.impose(for: Dependency.self, option: .closureBased, SomeDependency())
 ```
 
-or if you want to set it to single instance explicitly:
+or if you want to set it to a single instance explicitly:
 
 ```swift
 Imposer.impose(for: Dependency.self, option: .singleInstance, SomeDependency())
 ```
 
-Don't forget that it will throw uncatchable Error if the provider is not registered yet. If you want to catch the error manually, just use `tryInject` instead:
+Don't forget that it will throw an uncatchable Error if the provider is not registered yet. If you want to catch the error manually, just use `tryInject` instead:
 
 ```swift
 class InjectedByInit {
@@ -135,7 +135,7 @@ class InjectedByInit {
 
 ## Optional Inject
 
-Sometimes you just don't want your app to be throwing error just because its failing in dependency injection. At those cases, just use `@UnforceInjected` attribute or `unforceInject` function. It will return nil if injection fail:
+Sometimes you just don't want your app to be throwing errors just because it's failing in dependency injection. In those cases, just use `@UnforceInjected` attribute or `unforceInject` function. It will return nil if injection fail:
 
 ```swift
 class InjectedByPropertyWrapper {
@@ -156,7 +156,7 @@ class InjectedByInit {
 
 ## No Match Rules
 
-If the Imposer did not found exact type registered but multiple compatible type, it will use the nearest one to the requested type. Like in this example:
+If the Imposer did not found the exact type registered but multiple compatible types, it will use the nearest one to the requested type. Like in this example:
 
 ```swift
 protocol Dependency {
@@ -188,7 +188,7 @@ Imposer.impose(for: MidwayToDependency.self, MidwayToDependency())
 Imposer.impose(for: FurthestToDependency.self, FurthestToDependency())
 ```
 
-and you try to inject `Dependency` protocol which Imposer already have three candidate for that, by default Imposer will return `NearestToDependency` since its the nearest one to `Dependency`:
+and you try to inject `Dependency` protocol which Imposer already have three candidates for that, by default Imposer will return `NearestToDependency` since its the nearest one to `Dependency`:
 
 ```swift
 class MyClass {
@@ -197,11 +197,11 @@ class MyClass {
 }
 ```
 
-but if you want to get other dependency, you could pass `InjectionRules`:
+but if you want to get another dependency, you could pass `InjectionRules`:
 - **nearest** which will return the nearest one found
 - **furthest** which will return the furthest one found
-- **nearestAndCastable** same like nearest, but will using type casting too when searching dependency
-- **furthestAndCastable** same like furthest, but will using type casting too when searching dependency
+- **nearestAndCastable** same like nearest, but will be using type casting too when searching dependency
+- **furthestAndCastable** same as furthest, but will be using type casting too when searching dependency
 
 
 ```swift
@@ -224,11 +224,11 @@ var dependency: Dependency = inject()
 var furthestDependency: Dependency = inject(ifNoMatchUse: .furthest)
 ```
 
-Keep in mind, using `nearestAndCastable` and `furthestAndCastable` will create/using the dependency instance and cast it to Dependency needed, so if the instance injected using one or more Dependencies that circular with itself, it will be raise a stack overflow, so its better avoid it unless you really need it and make sure the dependency is safe.
+Keep in mind, using `nearestAndCastable` and `furthestAndCastable` will create/using the dependency instance and cast it to Dependency needed, so if the instance injected using one or more Dependencies that circular with itself, it will be raising a stack overflow, so it's better to avoid it unless you really need it and make sure the dependency is safe.
 
 ## Multiple Imposer
 
-You could have multiple `Imposer` to provide different dependency for same type by using `ImposerType`.  `ImposerType` is an enumeration to mark the `Imposer`:
+You could have multiple `Imposer` to provide different dependencies for the same type by using `ImposerType`.  `ImposerType` is an enumeration to mark the `Imposer`:
 
 - **primary** which is the default Imposer
 - **secondary** which is the secondary Imposer where the Imposer will search if dependency is not present in the primary
@@ -264,7 +264,7 @@ It will search the dependency from the `Imposer` for the given type and if the d
 
 ## Module Injector
 
-If you have a modular project and wants the individual module to inject everything manually by itself. You can use `ModuleInjector` protocol, and use it as provider in the main module:
+If you have a modular project and want the individual module to inject everything manually by itself. You can use `ModuleInjector` protocol, and use it as a provider in the main module:
 
 ```swift
 // this is in MyModule
@@ -277,7 +277,7 @@ class MyModuleInjector: ModuleInjector {
 }
 ```
 
-then lets say in your `AppDelegate`:
+then let's say in your `AppDelegate`:
 
 ```swift
 import Impose
@@ -300,7 +300,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
-It will called `provide(using:)` with primary `Imposer`. type of imposer is optional, the default value is `primary`. You can add as many `ModuleInjector` as you need, but if the Module provide same Dependency for same type of `Imposer`, it will override the previous one with the new one.
+It will call `provide(using:)` with primary `Imposer`. type of imposer is optional, the default value is `primary`. You can add as many `ModuleInjector` as you need, but if the Module provides the same Dependency for the same type of `Imposer`, it will override the previous one with the new one.
 
 ## Contribute
 
