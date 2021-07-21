@@ -6,9 +6,9 @@
 
 Impose is a simple dependency injection library for Swift
 
-[![codebeat badge](https://codebeat.co/badges/e200329c-321e-432b-8281-beb6d4dc4293)](https://codebeat.co/projects/github-com-nayanda1-impose-main)
-![build](https://github.com/nayanda1/Impose/workflows/build/badge.svg)
-![test](https://github.com/nayanda1/Impose/workflows/test/badge.svg)
+[![codebeat badge](https://codebeat.co/badges/e200329c-321e-432b-8281-beb6d4dc4293)](https://codebeat.co/projects/github-com-hainayanda-impose-main)
+![build](https://github.com/hainayanda/Impose/workflows/build/badge.svg)
+![test](https://github.com/hainayanda/Impose/workflows/test/badge.svg)
 [![SwiftPM Compatible](https://img.shields.io/badge/SwiftPM-Compatible-brightgreen)](https://swift.org/package-manager/)
 [![Version](https://img.shields.io/cocoapods/v/Impose.svg?style=flat)](https://cocoapods.org/pods/Impose)
 [![License](https://img.shields.io/cocoapods/l/Impose.svg?style=flat)](https://cocoapods.org/pods/Impose)
@@ -37,8 +37,8 @@ pod 'Impose', '~> 1.2'
 ### Swift Package Manager from XCode
 
 - Add it using XCode menu **File > Swift Package > Add Package Dependency**
-- Add **https://github.com/nayanda1/Impose.git** as Swift Package URL
-- Set rules at **version**, with **Up to Next Major** option and put **1.2.5** as its version
+- Add **https://github.com/hainayanda/Impose.git** as Swift Package URL
+- Set rules at **version**, with **Up to Next Major** option and put **1.2.6** as its version
 - Click next and wait
 
 ### Swift Package Manager from Package.swift
@@ -47,7 +47,7 @@ Add as your target dependency in **Package.swift**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nayanda1/Impose.git", .upToNextMajor(from: "1.2.5"))
+    .package(url: "https://github.com/hainayanda/Impose.git", .upToNextMajor(from: "1.2.6"))
 ]
 ```
 
@@ -62,7 +62,7 @@ Use it in your target as `Impose`
 
 ## Author
 
-Nayanda Haberty, nayanda1@outlook.com
+Nayanda Haberty, hainayanda@outlook.com
 
 ## License
 
