@@ -1,19 +1,19 @@
 {
   "name": "Impose",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "summary": "Simple dependency injection library for Swift.",
   "description": "Impose is a simple dependency injection library for Swift",
-  "homepage": "https://github.com/nayanda1/Impose",
+  "homepage": "https://github.com/hainayanda/Impose",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
   "authors": {
-    "nayanda": "nayanda1@outlook.com"
+    "nayanda": "hainayanda@outlook.com"
   },
   "source": {
-    "git": "https://github.com/nayanda1/Impose.git",
-    "tag": "1.2.5"
+    "git": "https://github.com/hainayanda/Impose.git",
+    "tag": "1.2.6"
   },
   "platforms": {
     "ios": "10.0"
