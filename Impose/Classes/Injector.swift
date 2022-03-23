@@ -11,7 +11,7 @@ import Foundation
 //public typealias Imposer = Injector
 
 /// Injector class
-public class Injector {
+public class Injector: Clonable {
     
     // MARK: Public Static
     
@@ -55,6 +55,10 @@ public class Injector {
     }
     
     // MARK: Public Method
+    
+    public func asScopedInjector() -> Injector {
+        clone() as! Injector
+    }
     
     // MARK: Transient
     
@@ -214,6 +218,14 @@ public class Injector {
             contextGroup.remove(allNotIn: resolvers)
         }
         cachedResolvers.removeAll()
+    }
+    
+    func clone() -> Any {
+        let myClone = Injector()
+        myClone.contextGroups = contextGroups.cloneArray()
+        myClone.resolvers = resolvers.cloneDictionary()
+        myClone.cachedResolvers = cachedResolvers.cloneDictionary()
+        return myClone
     }
 }
 
