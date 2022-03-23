@@ -183,6 +183,7 @@ class InjectedByPropertyWrapper {
     ...
     ...
 }
+```
 
 ## Impose Context
 
