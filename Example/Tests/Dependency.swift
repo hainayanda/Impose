@@ -8,23 +8,23 @@
 
 import Foundation
 
-protocol Dependency {
+protocol Dependency: AnyObject {
     func explainMyself() -> String
 }
 
-class SomeDependency: Dependency {
+class ChildDependency: Dependency {
     func explainMyself() -> String {
-        return "I am SomeDependency and Injected"
+        return "I am ChildDependency and Injected"
     }
 }
 
-class SomeOtherDependency: SomeDependency {
+class GrandChildDependency: ChildDependency {
     override func explainMyself() -> String {
-        return "I am SomeOtherDependency and Injected"
+        return "I am GrandChildDependency and Injected"
     }
 }
 
-class SomeOtherUpperDependency: SomeOtherDependency {
+class GrandGrandChildDependency: GrandChildDependency {
     override func explainMyself() -> String {
         return "I am SomeOtherUpperDependency and Injected"
     }

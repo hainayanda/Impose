@@ -13,46 +13,22 @@ public class WrappedInject {
     @Injected
     var dependency: Dependency
     @Injected
-    var someDependency: SomeDependency
+    var childDependency: ChildDependency
     @Injected
-    var someOtherDependency: SomeOtherDependency
-}
-
-public class OtherWrappedInject {
-    @Injected(ifNoMatchUse: .furthest)
-    var dependency: Dependency
-    @Injected(ifNoMatchUse: .furthest)
-    var someDependency: SomeDependency
-    @Injected(ifNoMatchUse: .furthest)
-    var someOtherUpperDependency: SomeOtherUpperDependency
+    var grandChildDependency: GrandChildDependency
 }
 
 public class InitInject {
     
     var dependency: Dependency
-    var someDependency: SomeDependency
-    var someOtherDependency: SomeOtherDependency
+    var childDependency: ChildDependency
+    var grandChildDependency: GrandChildDependency
     
-    init(dependency: Dependency = inject(),
-         someDependency: SomeDependency = inject(of: SomeDependency.self),
-         someOtherDependency: SomeOtherDependency = inject()) {
+    init(dependency: Dependency = inject(Dependency.self),
+         someDependency: ChildDependency = inject(ChildDependency.self),
+         someOtherDependency: GrandChildDependency = inject(GrandChildDependency.self)) {
         self.dependency = dependency
-        self.someDependency = someDependency
-        self.someOtherDependency = someOtherDependency
-    }
-}
-
-public class OtherInitInject {
-    
-    var dependency: Dependency
-    var someDependency: SomeDependency
-    var someOtherUpperDependency: SomeOtherUpperDependency
-    
-    init(dependency: Dependency = inject(ifNoMatchUse: .furthest),
-         someDependency: SomeDependency = inject(of: SomeDependency.self, ifNoMatchUse: .furthest),
-         someOtherUpperDependency: SomeOtherUpperDependency = inject(ifNoMatchUse: .furthest)) {
-        self.dependency = dependency
-        self.someDependency = someDependency
-        self.someOtherUpperDependency = someOtherUpperDependency
+        self.childDependency = someDependency
+        self.grandChildDependency = someOtherDependency
     }
 }
