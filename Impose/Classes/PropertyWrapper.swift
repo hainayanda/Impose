@@ -7,9 +7,20 @@
 
 import Foundation
 
+protocol InjectedProperty: AnyObject {
+    var injector: Injector { get }
+    var scopedInjector: Injector? { get set }
+}
+
+extension InjectedProperty {
+    var injector: Injector {
+        scopedInjector ?? Injector.shared
+    }
+}
+
 @propertyWrapper
 /// The wrapper of inject(for:) method
-public class Injected<T> {
+public class Injected<T>: InjectedProperty {
     public lazy var wrappedValue: T = {
         let result = resolveAndGetContext()
         self.context = result.context
@@ -22,39 +33,31 @@ public class Injected<T> {
         return result.context
     }()
     
-    var injector: Injector {
-        scopedInjector ?? Injector.shared
+    var scopedInjector: Injector? {
+        didSet {
+            let result = resolveAndGetContext()
+            self.wrappedValue = result.value
+            self.context = result.context
+        }
     }
-    let scopedInjector: Injector?
     
     let rules: InjectionRules
     let type: ImposerType
     
     @available(*, deprecated, message: "Use no param instead, will be removed in next release")
     public init(type: ImposerType) {
-        self.scopedInjector = nil
         self.rules = .nearest
         self.type = type
     }
     
     @available(*, deprecated, message: "Use no param instead, will be removed in next release")
     public init(ifNoMatchUse rules: InjectionRules = .nearest) {
-        self.scopedInjector = nil
         self.rules = rules
         self.type = .primary
     }
     
     /// Default init
     public init() {
-        self.scopedInjector = nil
-        self.rules = .nearest
-        self.type = .primary
-    }
-    
-    /// Init with given injector
-    /// - Parameter injector: injector used to inject
-    public init(scopedBy injector: Injector) {
-        self.scopedInjector = injector
         self.rules = .nearest
         self.type = .primary
     }
@@ -91,7 +94,7 @@ public class UnforceInjected<T> {
 
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
-public class SafelyInjected<T> {
+public class SafelyInjected<T>: InjectedProperty {
     public lazy var wrappedValue: T? = {
         let result = resolveAndGetContext()
         self.context = result.context
@@ -104,21 +107,15 @@ public class SafelyInjected<T> {
         return result.context
     }()
     
-    var injector: Injector {
-        scopedInjector ?? Injector.shared
+    var scopedInjector: Injector? {
+        didSet {
+            let result = resolveAndGetContext()
+            self.wrappedValue = result.value
+            self.context = result.context
+        }
     }
-    let scopedInjector: Injector?
-    
     /// Default init
-    public init() {
-        self.scopedInjector = nil
-    }
-    
-    /// Init with given injector
-    /// - Parameter injector: injector used to inject
-    public init(scopedBy injector: Injector) {
-        self.scopedInjector = injector
-    }
+    public init() { }
     
     public var projectedValue: ImposeContext? {
         context
