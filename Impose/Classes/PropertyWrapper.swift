@@ -43,7 +43,6 @@ public class Injected<T>: InjectedProperty {
     
     /// Default init
     public init() { }
-    }
     
     public var projectedValue: ImposeContext? {
         context
