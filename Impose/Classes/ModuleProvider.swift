@@ -11,6 +11,6 @@ import Foundation
 public protocol ModuleProvider {
     
     /// This method will called when this class registered to Imposer
-    /// - Parameter imposer: the imposer
-    func provide(for imposer: Injector)
+    /// - Parameter injector: the imposer
+    func provide(for injector: Injector)
 }

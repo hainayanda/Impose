@@ -15,6 +15,22 @@ public func tryInject<T>(_ type: T.Type) throws -> T {
     try Injector.shared.resolve(type)
 }
 
+public func inject<T>(_ type: T.Type, ifFail resolve: () -> T) -> T {
+    do {
+        return try Injector.shared.resolve(type)
+    } catch {
+        return resolve()
+    }
+}
+
+public func inject<T>(_ type: T.Type, ifFailUse resolve: @autoclosure () -> T) -> T {
+    do {
+        return try Injector.shared.resolve(type)
+    } catch {
+        return resolve()
+    }
+}
+
 /// get instance of the given type. It will throws fatal error if fail
 /// - Parameter type: type of instance
 /// - Returns: instance resolved
