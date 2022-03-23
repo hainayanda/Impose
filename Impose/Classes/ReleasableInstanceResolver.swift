@@ -82,15 +82,16 @@ class ContextGroup {
     
     func isGroup(of context: ImposeContext) -> Bool {
         guard let myContext = _context else {
-            if context.contextId == groupId, context.resolverInContexts.count == resolvers.count {
-                for resolver in resolvers {
-                    if !context.resolverInContexts.contains(where: {$0 === resolver }) {
-                        return false
-                    }
-                }
-                return true
+            guard context.contextId == groupId,
+                  context.resolverInContexts.count == resolvers.count else {
+                return false
             }
-            return false
+            for resolver in resolvers {
+                if !context.resolverInContexts.contains(where: {$0 === resolver }) {
+                    return false
+                }
+            }
+            return true
         }
         return context === myContext
     }

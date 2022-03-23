@@ -156,18 +156,7 @@ public class Injector {
     /// - Returns: instance resolved
     public func resolve<T>(_ type: T.Type) throws -> T {
         guard let resolver = resolvers[type] ?? cachedResolvers[type] else {
-            let potentialProviders = findPotentialProviders(for: type)
-            for resolver in potentialProviders {
-                guard let instance = resolver.resolveInstance() as? T else {
-                    continue
-                }
-                cachedResolvers[type] = resolver
-                return instance
-            }
-            throw ImposeError(
-                errorDescription: "Impose Error: fail when search for imposed instance",
-                failureReason: "No compatible resolver for \(String(describing:T.self))"
-            )
+            return try findAndCachedCompatibleInstance(of: type)
         }
         guard let instance = resolver.resolveInstance() as? T else {
             throw ImposeError(
@@ -203,6 +192,21 @@ public class Injector {
         }.sorted { resolver1, resolver2 in
             resolver2.canBeResolved(by: resolver1)
         }
+    }
+    
+    func findAndCachedCompatibleInstance<T>(of type: T.Type) throws -> T {
+        let potentialProviders = findPotentialProviders(for: type)
+        for resolver in potentialProviders {
+            guard let instance = resolver.resolveInstance() as? T else {
+                continue
+            }
+            cachedResolvers[type] = resolver
+            return instance
+        }
+        throw ImposeError(
+            errorDescription: "Impose Error: fail when search for imposed instance",
+            failureReason: "No compatible resolver for \(String(describing:T.self))"
+        )
     }
     
     func cleanCachedAndGroup() {
