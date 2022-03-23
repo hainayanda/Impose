@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Protocol to provide modular injector
+@available(*, deprecated, message: "Use ModuleProvider instead, will be removed in next release")
 public protocol ModuleInjector {
     /// Imposer type
     var type: ImposerType { get }

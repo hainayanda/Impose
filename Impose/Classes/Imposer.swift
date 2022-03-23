@@ -10,6 +10,7 @@ import Foundation
 typealias ImposerCollections = Dictionary<ImposerType, Imposer>
 
 /// Injector class
+@available(*, deprecated, message: "Use Injector instead, will be removed in next release")
 public class Imposer {
     
     /// shared instance of primary imposer
@@ -29,6 +30,7 @@ public class Imposer {
     /// If the imposer of type is not found, it will created a new one and return it
     /// - Parameter type: type of imposer
     /// - Returns: Imposer instance
+    @available(*, deprecated, message: "Use Injector instead, will be removed in next release")
     public static func imposer(of type: ImposerType) -> Imposer {
         guard let imposer = imposers[type] else {
             let imposer = Imposer()
@@ -41,6 +43,7 @@ public class Imposer {
     /// Static function to provide module injector
     /// It will automatically run module injector provide(for:) with its imposer type
     /// - Parameter moduleInjector: ModuleInjector
+    @available(*, deprecated, message: "Use Injector instead, will be removed in next release")
     public static func provide(using moduleInjector: ModuleInjector) {
         let imposer: Imposer = Imposer.imposer(of: moduleInjector.type)
         moduleInjector.provide(for: imposer)
@@ -51,6 +54,7 @@ public class Imposer {
     ///   - anyType: Type of instance
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
+    @available(*, deprecated, message: "Use Injector instead, will be removed in next release")
     public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
         shared.impose(for: anyType, option: option, provider)
         
@@ -61,6 +65,7 @@ public class Imposer {
     ///   - anyType: Type of instance
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
+    @available(*, deprecated, message: "Use Injector instead, will be removed in next release")
     public static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
         shared.impose(for: anyType, option: option, closureProvider)
     }
@@ -70,6 +75,7 @@ public class Imposer {
     ///   - anyType: Type of instance
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
+    @available(*, deprecated, message: "Use Injector instead, will be removed in next release")
     public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ provider: @escaping @autoclosure () -> T) {
         providers.add(provider: option.createProvider(provider), for: anyType, includingOptional: true)
         clearCached()
@@ -80,6 +86,7 @@ public class Imposer {
     ///   - anyType: Type of instance
     ///   - option: Option of how to provide the dependency
     ///   - provider: The provider
+    @available(*, deprecated, message: "Use Injector instead, will be removed in next release")
     public func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance,_ closureProvider: @escaping () -> T) {
         providers.add(provider: option.createProvider(closureProvider), for: anyType, includingOptional: true)
         clearCached()

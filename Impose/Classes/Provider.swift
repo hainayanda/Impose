@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Provider: class {
+protocol Provider: AnyObject {
     var identifier: ObjectIdentifier { get }
     var isValid: Bool { get }
     func canBeProvided(by otherProvider: Provider) -> Bool

@@ -1,11 +1,11 @@
 PODS:
-  - Impose (1.2.5)
-  - Nimble (9.2.0)
+  - Impose (1.2.6)
+  - Nimble (9.2.1)
   - Quick (4.0.0)
 
 DEPENDENCIES:
   - Impose (from `../`)
-  - Nimble (~> 9.2.0)
+  - Nimble (~> 9.2.1)
   - Quick (~> 4.0.0)
 
 SPEC REPOS:
@@ -18,10 +18,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Impose: c0d3879c4d2112387eaf40228bca92a06379688c
-  Nimble: 4f4a345c80b503b3ea13606a4f98405974ee4d0b
+  Impose: 9b806524e7af38e2f5622ba1ff8830054727f9dc
+  Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 6473349e43b9271a8d43839d9ba1c442ed1b7ac4
 
-PODFILE CHECKSUM: acaac386609fd58aefba7c40720556f88975f0ec
+PODFILE CHECKSUM: f11626566822b0f1b1c5cb8dc22b49aa867f2084
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2
