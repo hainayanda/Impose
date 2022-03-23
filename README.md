@@ -162,6 +162,31 @@ class InjectedByInit {
 
 ## Scoped Injector
 
+You can scoped your injector so it will not intervene with shared injector:
+
+```swift
+// this will create a new cloned injector, with all the resolver in initial state
+var myInjector = Injector.shared.asScopedInjector()
+```
+
+Then you can use the injector as a custom scoped injector:
+
+```swift
+class InjectedByPropertyWrapper {
+    @Injected var dependency: Dependency?
+    
+    init(_ injector: Injector) {
+        // will inject all Injected property wrapper using given injector instead of the shared ones
+        inject(self, with: injector)
+    }
+    
+    ...
+    ...
+}
+```
+
+## Impose Context
+
 You can manually control the instance creation by context scoped:
 
 ```swift
