@@ -41,25 +41,8 @@ public class Injected<T>: InjectedProperty {
         }
     }
     
-    let rules: InjectionRules
-    let type: ImposerType
-    
-    @available(*, deprecated, message: "Use no param instead, will be removed in next release")
-    public init(type: ImposerType) {
-        self.rules = .nearest
-        self.type = type
-    }
-    
-    @available(*, deprecated, message: "Use no param instead, will be removed in next release")
-    public init(ifNoMatchUse rules: InjectionRules = .nearest) {
-        self.rules = rules
-        self.type = .primary
-    }
-    
     /// Default init
-    public init() {
-        self.rules = .nearest
-        self.type = .primary
+    public init() { }
     }
     
     public var projectedValue: ImposeContext? {
@@ -67,28 +50,9 @@ public class Injected<T>: InjectedProperty {
     }
     
     func resolveAndGetContext() -> (value: T, context: ImposeContext?){
-        do {
-            let value = try injector.resolve(T.self)
-            let context = injector.context(of: T.self)
-            return (value, context)
-        } catch {
-            // will be removed on next release
-            let value: T = inject(from: type, ifNoMatchUse: rules)
-            return (value, nil)
-        }
-    }
-}
-
-@propertyWrapper
-@available(*, deprecated, message: "Use ModuleProvider instead, will be removed in next release")
-public class UnforceInjected<T> {
-    public lazy var wrappedValue: T? = unforceInject(from: type, ifNoMatchUse: rules)
-    let rules: InjectionRules
-    let type: ImposerType
-    
-    public init(type: ImposerType = .primary, ifNoMatchUse rules: InjectionRules = .nearest) {
-        self.rules = rules
-        self.type = type
+        let value = try! injector.resolve(T.self)
+        let context = injector.context(of: T.self)
+        return (value, context)
     }
 }
 

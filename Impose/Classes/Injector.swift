@@ -7,8 +7,7 @@
 
 import Foundation
 
-/// will uncoment in next release
-//public typealias Imposer = Injector
+public typealias Imposer = Injector
 
 /// Injector class
 public class Injector: Clonable {
