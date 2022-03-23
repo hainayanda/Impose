@@ -47,8 +47,8 @@ class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
         return newInstance
     }()
     
-    init(provider: @escaping () -> Instance) {
-        self.temporaryProvider = provider
+    init(resolver: @escaping () -> Instance) {
+        self.temporaryProvider = resolver
     }
     
     override func resolveInstance() -> Any {
@@ -59,13 +59,13 @@ class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
 // MARK: FactoryInstanceProvider class
 
 class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
-    var provider: () -> Instance
+    var resolver: () -> Instance
     
-    init(provider: @escaping () -> Instance) {
-        self.provider = provider
+    init(resolver: @escaping () -> Instance) {
+        self.resolver = resolver
     }
     
     override func resolveInstance() -> Any {
-        return provider()
+        return resolver()
     }
 }

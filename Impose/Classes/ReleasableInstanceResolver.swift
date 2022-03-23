@@ -17,17 +17,17 @@ protocol ReleasableInstanceResolver: InstanceResolver {
 
 class ContextInstanceProvider<Instance>: InstanceProvider<Instance>, ReleasableInstanceResolver {
     
-    var provider: () -> Instance
+    var resolver: () -> Instance
     var instance: Instance?
     
-    init(provider: @escaping () -> Instance) {
-        self.provider = provider
+    init(resolver: @escaping () -> Instance) {
+        self.resolver = resolver
         super.init()
     }
     
     override func resolveInstance() -> Any {
         guard let instance = instance else {
-            let newInstance = provider()
+            let newInstance = resolver()
             self.instance = newInstance
             return newInstance
         }
@@ -44,13 +44,13 @@ class ContextInstanceProvider<Instance>: InstanceProvider<Instance>, ReleasableI
 class ContextGroup {
     
     var groupId: AnyHashable
-    var providers: [ReleasableInstanceResolver] = []
+    var resolvers: [ReleasableInstanceResolver] = []
     
     weak private var _context: ImposeContext?
     
     var context: ImposeContext {
         guard let context = _context else {
-            let newContext = ImposeContext(contextId: groupId, providerInContexts: providers)
+            let newContext = ImposeContext(contextId: groupId, resolverInContexts: resolvers)
             self._context = newContext
             return newContext
         }
@@ -62,29 +62,29 @@ class ContextGroup {
         _context = context
     }
     
-    func add(provider: ReleasableInstanceResolver) {
-        self.providers.append(provider)
+    func add(resolver: ReleasableInstanceResolver) {
+        self.resolvers.append(resolver)
     }
     
-    func remove(allNotIn providers: [TypeHashable: InstanceResolver]) {
-        self.providers = self.providers.filter { myProvider in
-            providers.values.contains { $0 === myProvider }
+    func remove(allNotIn resolvers: [TypeHashable: InstanceResolver]) {
+        self.resolvers = self.resolvers.filter { myProvider in
+            resolvers.values.contains { $0 === myProvider }
         }
-        self._context?.providerInContexts = self.providers
+        self._context?.resolverInContexts = self.resolvers
     }
     
-    func isGroup(of provider: InstanceResolver) -> Bool {
-        guard let contextProvider = provider as? ReleasableInstanceResolver else {
+    func isGroup(of resolver: InstanceResolver) -> Bool {
+        guard let contextProvider = resolver as? ReleasableInstanceResolver else {
             return false
         }
-        return providers.contains { $0 === contextProvider }
+        return resolvers.contains { $0 === contextProvider }
     }
     
     func isGroup(of context: ImposeContext) -> Bool {
         guard let myContext = _context else {
-            if context.contextId == groupId, context.providerInContexts.count == providers.count {
-                for provider in providers {
-                    if !context.providerInContexts.contains(where: {$0 === provider }) {
+            if context.contextId == groupId, context.resolverInContexts.count == resolvers.count {
+                for resolver in resolvers {
+                    if !context.resolverInContexts.contains(where: {$0 === resolver }) {
                         return false
                     }
                 }
@@ -102,28 +102,28 @@ class ContextGroup {
 public class ImposeContext {
     
     var contextId: AnyHashable
-    var providerInContexts: [ReleasableInstanceResolver]
+    var resolverInContexts: [ReleasableInstanceResolver]
     
     public init() {
         self.contextId = UUID().uuidString
-        self.providerInContexts = []
+        self.resolverInContexts = []
     }
     
-    init(contextId: AnyHashable, providerInContexts: [ReleasableInstanceResolver]) {
+    init(contextId: AnyHashable, resolverInContexts: [ReleasableInstanceResolver]) {
         self.contextId = contextId
-        self.providerInContexts = providerInContexts
+        self.resolverInContexts = resolverInContexts
     }
     
-    func add(provider: ReleasableInstanceResolver) {
-        self.providerInContexts.append(provider)
+    func add(resolver: ReleasableInstanceResolver) {
+        self.resolverInContexts.append(resolver)
     }
     
     deinit {
         release()
     }
     
-    /// Release all the current instance in service providers in the same context
+    /// Release all the current instance in service resolvers in the same context
     public func release() {
-        providerInContexts.forEach { $0.release() }
+        resolverInContexts.forEach { $0.release() }
     }
 }
