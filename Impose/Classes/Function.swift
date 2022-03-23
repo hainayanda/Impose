@@ -13,6 +13,7 @@ import Foundation
 /// - Parameter rules: Injection rules
 /// - Throws: ImposeError, mostly if provider is not there
 /// - Returns: The provided instance
+@available(*, deprecated, message: "Use tryInject(_:) instead, will be removed in next release")
 public func tryInject<T>(from type: ImposerType = .primary, of anyType: T.Type, ifNoMatchUse rules: InjectionRules = .nearest) throws -> T {
     do {
         return try Imposer.imposer(of: type).imposedInstance(of: anyType, ifNoMatchUse: rules)
@@ -33,6 +34,7 @@ public func tryInject<T>(from type: ImposerType = .primary, of anyType: T.Type, 
 /// - Parameter type: type of imposer, will try to check from other imposer if dependency is not found
 /// - Parameter rules: Injection rules
 /// - Returns: The provided instance
+@available(*, deprecated, message: "Use inject(_:) instead, will be removed in next release")
 public func inject<T>(from type: ImposerType = .primary, of anyType: T.Type, ifNoMatchUse rules: InjectionRules = .nearest) -> T {
     try! tryInject(from: type, of: anyType, ifNoMatchUse: rules)
 }
@@ -40,6 +42,7 @@ public func inject<T>(from type: ImposerType = .primary, of anyType: T.Type, ifN
 /// Function to get instance from provider that throw catchable error
 /// - Throws: ImposeError, mostly if provider is not there
 /// - Returns: The provided instance
+@available(*, deprecated, message: "Use tryInject(_:) instead, will be removed in next release")
 public func tryInject<T>(from type: ImposerType = .primary, ifNoMatchUse rules: InjectionRules = .nearest) throws -> T {
     try tryInject(from: type, of: T.self, ifNoMatchUse: rules)
 }
@@ -49,6 +52,7 @@ public func tryInject<T>(from type: ImposerType = .primary, ifNoMatchUse rules: 
 /// - Parameters:
 ///   - type: type of imposer, will try to check from other imposer if dependency is not found
 ///   - rules: Injection rules
+@available(*, deprecated, message: "Use inject(_:) instead, will be removed in next release")
 public func inject<T>(from type: ImposerType = .primary, ifNoMatchUse rules: InjectionRules = .nearest) -> T {
     inject(from: type, of: T.self, ifNoMatchUse: rules)
 }
@@ -58,6 +62,7 @@ public func inject<T>(from type: ImposerType = .primary, ifNoMatchUse rules: Inj
 /// - Parameter type: type of imposer, will try to check from other imposer if dependency is not found
 /// - Parameter rules: Injection rules
 /// - Returns: The provided instance
+@available(*, deprecated, message: "Use injectIfProvided(_:) instead, will be removed in next release")
 public func unforceInject<T>(from type: ImposerType = .primary, of anyType: T.Type, ifNoMatchUse rules: InjectionRules = .nearest) -> T? {
     try? tryInject(from: type, of: anyType, ifNoMatchUse: rules)
 }
@@ -67,6 +72,7 @@ public func unforceInject<T>(from type: ImposerType = .primary, of anyType: T.Ty
 /// - Parameters:
 ///   - type: type of imposer, will try to check from other imposer if dependency is not found
 ///   - rules: Injection rules
+@available(*, deprecated, message: "Use injectIfProvided(_:) instead, will be removed in next release")
 public func unforceInject<T>(from type: ImposerType = .primary, ifNoMatchUse rules: InjectionRules = .nearest) -> T? {
     try? tryInject(from: type, of: T.self, ifNoMatchUse: rules)
 }
