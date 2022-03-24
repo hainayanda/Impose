@@ -162,7 +162,7 @@ class InjectedByInit {
 
 ## Scoped Injector
 
-You can scoped your injector so it will not intervene with shared injector:
+You can scoped your injector so all of its dependency instance is different than shared injector:
 
 ```swift
 // this will create a new cloned injector, with all the resolver in initial state
