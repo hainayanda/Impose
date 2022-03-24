@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: InstanceResolver protocol
 
-protocol InstanceResolver: AnyObject {
+protocol InstanceResolver: AnyObject, Clonable {
     func isResolver<T>(of anyType: T.Type) -> Bool
     func canBeResolved(by otherResolver: InstanceResolver) -> Bool
     func isPotentialResolver(of anyType: Any.Type) -> Bool
@@ -35,24 +35,28 @@ class InstanceProvider<Instance>: InstanceResolver {
     func resolveInstance() -> Any {
         fatalError("should be overridden")
     }
+    
+    func clone() -> Any {
+        fatalError("should be overridden")
+    }
 }
 
 // MARK: SingleInstanceProvider class
 
 class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
-    var temporaryProvider: (() -> Instance)?
-    lazy var instance: Instance = {
-        let newInstance = temporaryProvider!()
-        temporaryProvider = nil
-        return newInstance
-    }()
+    var resolver: () -> Instance
+    lazy var instance: Instance = resolver()
     
     init(resolver: @escaping () -> Instance) {
-        self.temporaryProvider = resolver
+        self.resolver = resolver
     }
     
     override func resolveInstance() -> Any {
         instance
+    }
+    
+    override func clone() -> Any {
+        SingleInstanceProvider(resolver: resolver)
     }
 }
 
@@ -67,5 +71,9 @@ class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
     
     override func resolveInstance() -> Any {
         return resolver()
+    }
+    
+    override func clone() -> Any {
+        FactoryInstanceProvider(resolver: resolver)
     }
 }

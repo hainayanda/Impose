@@ -36,6 +36,7 @@ public struct ImposeError: LocalizedError {
 }
 
 /// Imposer type
+@available(*, deprecated, message: "Will be removed in next release")
 public enum ImposerType: Hashable, Comparable {
     case primary
     case secondary
@@ -56,6 +57,7 @@ public enum ImposerType: Hashable, Comparable {
 /// Inject option
 /// singleInstance means the closure is only called once
 /// closureBased means the instance is always coming from closure
+@available(*, deprecated, message: "Will be removed in next release")
 public enum InjectOption {
     case singleInstance
     case closureBased
@@ -75,6 +77,7 @@ public enum InjectOption {
 /// furthest which means return furthest type requested
 /// nearestAndCastable which means return nearest type requested and using type casting
 /// furthestAndCastable which means return furthest type requested and using type casting
+@available(*, deprecated, message: "Will be removed in next release")
 public enum InjectionRules {
     case nearest
     case furthest

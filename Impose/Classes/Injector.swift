@@ -11,7 +11,7 @@ import Foundation
 //public typealias Imposer = Injector
 
 /// Injector class
-public class Injector {
+public class Injector: Clonable {
     
     // MARK: Public Static
     
@@ -30,7 +30,7 @@ public class Injector {
     }
     
     /// switch shared to default Injector
-    public static func switchToDefaultImposer() {
+    public static func switchToDefaultInjector() {
         self.customInjector = nil
     }
     
@@ -55,6 +55,10 @@ public class Injector {
     }
     
     // MARK: Public Method
+    
+    public func asScopedInjector() -> Injector {
+        clone() as! Injector
+    }
     
     // MARK: Transient
     
@@ -112,7 +116,7 @@ public class Injector {
     /// it will just create an instance once and reused it if asked again until context call release()
     /// - Parameters:
     ///   - anyType: type of resolver
-    ///   - context: scoped context
+    ///   - context: scoped context, it will use Injector.sharedContext if not provided
     ///   - resolver: closure that will be called to create instance if asked for given type
     public func addScoped<T>(for anyType: Any.Type, in context: ImposeContext = Injector.sharedContext, resolver: @escaping () -> T) {
         let resolver = ContextInstanceProvider(resolver: resolver)
@@ -127,7 +131,7 @@ public class Injector {
     /// it will just create an instance once and reused it if asked again until context call release()
     /// - Parameters:
     ///   - anyTypes: types of resolver
-    ///   - context: scoped context
+    ///   - context: scoped context, it will use Injector.sharedContext if not provided
     ///   - resolver: closure that will be called to create instance if asked for given types
     public func addScoped<T>(for anyTypes: [Any.Type], in context: ImposeContext = Injector.sharedContext, resolver: @escaping () -> T) {
         let resolver = ContextInstanceProvider(resolver: resolver)
@@ -215,6 +219,14 @@ public class Injector {
         }
         cachedResolvers.removeAll()
     }
+    
+    func clone() -> Any {
+        let myClone = Injector()
+        myClone.contextGroups = contextGroups.cloneArray()
+        myClone.resolvers = resolvers.cloneDictionary()
+        myClone.cachedResolvers = cachedResolvers.cloneDictionary()
+        return myClone
+    }
 }
 
 // MARK: Autoclosure
@@ -267,7 +279,7 @@ public extension Injector {
     /// it will just create an instance once and reused it if asked again until context call release()
     /// - Parameters:
     ///   - anyType: type of resolver
-    ///   - context: scoped context
+    ///   - context: scoped context, it will use Injector.sharedContext if not provided
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
     func addScoped<T>(for anyType: Any.Type, in context: ImposeContext = Injector.sharedContext, _ resolver: @autoclosure @escaping () -> T) {
         addScoped(for: anyType, in: context, resolver: resolver)
@@ -277,7 +289,7 @@ public extension Injector {
     /// it will just create an instance once and reused it if asked again until context call release()
     /// - Parameters:
     ///   - anyTypes: types of resolver
-    ///   - context: scoped context
+    ///   - context: scoped context, it will use Injector.sharedContext if not provided
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
     func addScoped<T>(for anyTypes: [Any.Type], in context: ImposeContext = Injector.sharedContext, _ resolver: @autoclosure @escaping () -> T) {
         addScoped(for: anyTypes, in: context, resolver: resolver)

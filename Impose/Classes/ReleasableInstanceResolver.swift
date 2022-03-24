@@ -34,6 +34,10 @@ class ContextInstanceProvider<Instance>: InstanceProvider<Instance>, ReleasableI
         return instance
     }
     
+    override func clone() -> Any {
+        ContextInstanceProvider(resolver: resolver)
+    }
+    
     func release() {
         instance = nil
     }
@@ -41,7 +45,7 @@ class ContextInstanceProvider<Instance>: InstanceProvider<Instance>, ReleasableI
 
 // MARK: ContextGroup class
 
-class ContextGroup {
+class ContextGroup: Clonable {
     
     var groupId: AnyHashable
     var resolvers: [ReleasableInstanceResolver] = []
@@ -60,6 +64,14 @@ class ContextGroup {
     public init(for context: ImposeContext) {
         self.groupId = context.contextId
         _context = context
+    }
+    
+    init(with groupId: AnyHashable) {
+        self.groupId = groupId
+    }
+    
+    func clone() -> Any {
+        ContextGroup(with: groupId)
     }
     
     func add(resolver: ReleasableInstanceResolver) {
