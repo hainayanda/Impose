@@ -15,10 +15,9 @@ import Foundation
 /// - Returns: instance resolved
 public func tryInject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolving? = nil) throws -> T {
     if let resolver = resolver {
-        let optionalInstance = try? resolver.resolve(type)
         let instance: T
-        if let nonOptionalInstance = optionalInstance {
-            instance = nonOptionalInstance
+        if let resolverInstance = try? resolver.resolve(type) {
+            instance = resolverInstance
         } else {
             instance = try Injector.shared.resolve(type)
         }

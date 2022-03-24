@@ -11,6 +11,7 @@ extension Mirror {
     func setInjectedToBeScoped(by injector: InjectResolving) {
         children.forEach {
             if let property = $0.value as? InjectedProperty {
+                if property.scopedInjector === injector { return }
                 property.scopedInjector = injector
             } else if let scopable = $0.value as? Scopable {
                 scopable.scoped(by: injector)
