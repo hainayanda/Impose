@@ -8,21 +8,16 @@
 import Foundation
 
 extension Mirror {
-    func setInjectedToBeScoped(by injector: Injector) {
+    func setInjectedToBeScoped(by injector: InjectResolving) {
         children.forEach {
-            guard let property = $0.value as? InjectedProperty else {
-                return
+            if let property = $0.value as? InjectedProperty {
+                property.scopedInjector = injector
+            } else if let scopable = $0.value as? Scopable {
+                scopable.scoped(by: injector)
+            } else {
+                let reflection = Mirror(reflecting: $0.value)
+                reflection.setInjectedToBeScoped(by: injector)
             }
-            property.scopedInjector = injector
         }
     }
-}
-
-/// inject all @injected property in given object and its property using same injector
-/// - Parameters:
-///   - object: any object
-///   - injector: injector
-public func inject(_ object: Any, with injector: Injector) {
-    let reflection = Mirror(reflecting: object)
-    reflection.setInjectedToBeScoped(by: injector)
 }

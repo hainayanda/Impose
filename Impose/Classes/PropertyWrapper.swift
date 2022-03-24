@@ -8,85 +8,34 @@
 import Foundation
 
 protocol InjectedProperty: AnyObject {
-    var injector: Injector { get }
-    var scopedInjector: Injector? { get set }
-}
-
-extension InjectedProperty {
-    var injector: Injector {
-        scopedInjector ?? Injector.shared
-    }
+    var scopedInjector: InjectResolving? { get set }
 }
 
 @propertyWrapper
 /// The wrapper of inject(for:) method
 public class Injected<T>: InjectedProperty {
-    public lazy var wrappedValue: T = {
-        let result = resolveAndGetContext()
-        self.context = result.context
-        return result.value
-    }()
+    public lazy var wrappedValue: T = inject(T.self, scopedBy: scopedInjector)
     
-    lazy var context: ImposeContext? = {
-        let result = resolveAndGetContext()
-        self.wrappedValue = result.value
-        return result.context
-    }()
-    
-    var scopedInjector: Injector? {
+    var scopedInjector: InjectResolving? {
         didSet {
-            let result = resolveAndGetContext()
-            self.wrappedValue = result.value
-            self.context = result.context
+            wrappedValue = inject(T.self, scopedBy: scopedInjector)
         }
     }
     
     /// Default init
     public init() { }
-    
-    public var projectedValue: ImposeContext? {
-        context
-    }
-    
-    func resolveAndGetContext() -> (value: T, context: ImposeContext?){
-        let value = try! injector.resolve(T.self)
-        let context = injector.context(of: T.self)
-        return (value, context)
-    }
 }
 
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
 public class SafelyInjected<T>: InjectedProperty {
-    public lazy var wrappedValue: T? = {
-        let result = resolveAndGetContext()
-        self.context = result.context
-        return result.value
-    }()
+    public lazy var wrappedValue: T? = injectIfProvided(for: T.self, scopedBy: scopedInjector)
     
-    lazy var context: ImposeContext? = {
-        let result = resolveAndGetContext()
-        self.wrappedValue = result.value
-        return result.context
-    }()
-    
-    var scopedInjector: Injector? {
+    var scopedInjector: InjectResolving? {
         didSet {
-            let result = resolveAndGetContext()
-            self.wrappedValue = result.value
-            self.context = result.context
+            wrappedValue = injectIfProvided(for: T.self, scopedBy: scopedInjector)
         }
     }
     /// Default init
     public init() { }
-    
-    public var projectedValue: ImposeContext? {
-        context
-    }
-    
-    func resolveAndGetContext() -> (value: T?, context: ImposeContext?){
-        let value = try? injector.resolve(T.self)
-        let context = injector.context(of: T.self)
-        return (value, context)
-    }
 }
