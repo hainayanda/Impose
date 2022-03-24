@@ -9,7 +9,7 @@
 import Foundation
 import Impose
 
-public class WrappedSafeInject {
+public class WrappedSafeInject: Scopable {
     @SafelyInjected
     var dependency: Dependency?
     @SafelyInjected

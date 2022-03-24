@@ -87,7 +87,6 @@ class InjectTests: QuickSpec {
         }
         describe("scoped test") {
             beforeEach {
-                Injector.sharedContext.release()
                 Injector.switchInjector(to: Injector())
                 Injector.shared.addScoped(for: Dependency.self, ChildDependency())
                 Injector.shared.addScoped(for: GrandChildDependency.self, GrandChildDependency())
@@ -95,27 +94,13 @@ class InjectTests: QuickSpec {
             }
             it("should inject from property wrapper with nearest type") {
                 let injected = WrappedInject()
+                injected.applyAsRootScopedInjection()
                 expect(injected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beTrue())
-                Injector.sharedContext.release()
                 let newInjected = WrappedInject()
-                expect(newInjected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(newInjected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(newInjected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
-                expect(newInjected.dependency === newInjected.childDependency).to(beTrue())
-                expect(injected.dependency === newInjected.dependency).to(beFalse())
-                expect(injected.childDependency === newInjected.childDependency).to(beFalse())
-            }
-            it("should inject from init with nearest type") {
-                let injected = InitInject()
-                expect(injected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(injected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(injected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
-                expect(injected.dependency === injected.childDependency).to(beTrue())
-                Injector.sharedContext.release()
-                let newInjected = WrappedInject()
+                newInjected.applyAsRootScopedInjection()
                 expect(newInjected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
@@ -125,27 +110,13 @@ class InjectTests: QuickSpec {
             }
             it("should inject from property wrapper with nearest type") {
                 let injected = WrappedSafeInject()
+                injected.applyAsRootScopedInjection()
                 expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beTrue())
-                Injector.sharedContext.release()
                 let newInjected = WrappedSafeInject()
-                expect(newInjected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(newInjected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(newInjected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
-                expect(newInjected.dependency === newInjected.childDependency).to(beTrue())
-                expect(injected.dependency === newInjected.dependency).to(beFalse())
-                expect(injected.childDependency === newInjected.childDependency).to(beFalse())
-            }
-            it("should inject from init with nearest type") {
-                let injected = InitSafeInject()
-                expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
-                expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
-                expect(injected.dependency === injected.childDependency).to(beTrue())
-                Injector.sharedContext.release()
-                let newInjected = WrappedSafeInject()
+                newInjected.applyAsRootScopedInjection()
                 expect(newInjected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
