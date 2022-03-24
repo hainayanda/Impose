@@ -50,7 +50,6 @@ public class Injector: InjectResolver {
     public func scopedInjector() -> InjectResolving {
         let resolver = InjectResolver()
         resolver.resolvers = scopedResolver.resolvers.withNoInstances()
-        resolver.cachedResolvers = scopedResolver.resolvers.withNoInstances()
         return resolver
     }
     
