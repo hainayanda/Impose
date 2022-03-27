@@ -9,6 +9,8 @@ import Foundation
 
 public typealias Imposer = Injector
 
+public typealias UnforceInjected = SafelyInjected
+
 public enum InjectOption {
     case singleInstance
     case closureBased
