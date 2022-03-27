@@ -7,8 +7,6 @@
 
 import Foundation
 
-public typealias Imposer = Injector
-
 /// Injector class
 public class Injector: InjectResolver {
     
