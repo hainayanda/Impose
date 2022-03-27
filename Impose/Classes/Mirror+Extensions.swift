@@ -8,17 +8,11 @@
 import Foundation
 
 extension Mirror {
-    func setInjectedToBeScoped(by injector: InjectResolving) {
+    func setInjectedToBeScoped(by context: InjectContext) {
         children.forEach {
-            if let property = $0.value as? InjectedProperty {
-                if property.scopedInjector === injector { return }
-                property.scopedInjector = injector
-            } else if let scopable = $0.value as? Scopable {
-                scopable.scoped(by: injector)
-            } else {
-                let reflection = Mirror(reflecting: $0.value)
-                reflection.setInjectedToBeScoped(by: injector)
-            }
+            guard let property = $0.value as? ScopeInjectable else { return }
+            property.applyScope(by: context)
         }
+        self.superclassMirror?.setInjectedToBeScoped(by: context)
     }
 }
