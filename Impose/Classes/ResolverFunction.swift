@@ -13,7 +13,7 @@ import Foundation
 ///   - injector: Injector that will resolve the instance
 /// - Throws: ImposeError
 /// - Returns: instance resolved
-public func tryInject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolving? = nil) throws -> T {
+public func tryInject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectContext? = nil) throws -> T {
     if let resolver = resolver {
         let instance: T
         if let resolverInstance = try? resolver.resolve(type) {
@@ -21,8 +21,10 @@ public func tryInject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResol
         } else {
             instance = try Injector.shared.resolve(type)
         }
-        let reflection = Mirror(reflecting: instance)
-        reflection.setInjectedToBeScoped(by: resolver)
+        if instance is Scopable {
+            let reflection = Mirror(reflecting: instance)
+            reflection.setInjectedToBeScoped(by: resolver)
+        }
         return instance
     }
     return try Injector.shared.resolve(type)
@@ -35,7 +37,7 @@ public func tryInject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResol
 /// - Throws: ImposeError
 /// - Returns: instance resolved
 public func tryInject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable) throws -> T {
-    try tryInject(type, scopedBy: scopable.scopeInjector)
+    try tryInject(type, scopedBy: scopable.scopeContext)
 }
 
 
@@ -45,7 +47,7 @@ public func tryInject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable) t
 ///   - resolve: closure resolver to call if inject fail
 ///   - injector: Injector that will resolve the instance
 /// - Returns:  instance resolved
-public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolving? = nil, ifFail resolve: () -> T) -> T {
+public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectContext? = nil, ifFail resolve: () -> T) -> T {
     do {
         return try tryInject(type, scopedBy: resolver)
     } catch {
@@ -66,7 +68,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolvin
 ///   - injector: Injector that will resolve the instance
 /// - Returns:  instance resolved
 public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable, ifFail resolve: () -> T) -> T {
-    inject(type, scopedBy: scopable.scopeInjector, ifFail: resolve)
+    inject(type, scopedBy: scopable.scopeContext, ifFail: resolve)
 }
 
 /// get instance of the given type. It will use given autoclosure if fail
@@ -75,7 +77,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable, ifFa
 ///   - injector: Injector that will resolve the instance
 ///   - resolve: autoclosure resolver to call if inject fail
 /// - Returns:  instance resolved
-public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolving? = nil, ifFailUse resolve: @autoclosure () -> T) -> T {
+public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectContext? = nil, ifFailUse resolve: @autoclosure () -> T) -> T {
     inject(type, scopedBy: resolver, ifFail: resolve)
 }
 
@@ -86,7 +88,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolvin
 ///   - resolve: autoclosure resolver to call if inject fail
 /// - Returns:  instance resolved
 public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable, ifFailUse resolve: @autoclosure () -> T) -> T {
-    inject(type, scopedBy: scopable.scopeInjector, ifFail: resolve)
+    inject(type, scopedBy: scopable.scopeContext, ifFail: resolve)
 }
 
 /// get instance of the given type. It will throws fatal error if fail
@@ -94,7 +96,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable, ifFa
 ///   - type: type of instance
 ///   - injector: Injector that will resolve the instance
 /// - Returns: instance resolved
-public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolving? = nil) -> T {
+public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectContext? = nil) -> T {
     try! tryInject(type, scopedBy: resolver)
 }
 
@@ -104,7 +106,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy resolver: InjectResolvin
 ///   - scopable: Scopable that will provide scopeInjector to resolve the instance
 /// - Returns: instance resolved
 public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable) -> T {
-    inject(type, scopedBy: scopable.scopeInjector)
+    inject(type, scopedBy: scopable.scopeContext)
 }
 
 /// get instance of the given type. it will return nil if fail
@@ -112,7 +114,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable) -> T
 ///   - type: type of instance
 ///   - injector: Injector that will resolve the instance
 /// - Returns: instance resolved if found and nil if not
-public func injectIfProvided<T>(for type: T.Type = T.self, scopedBy resolver: InjectResolving? = nil) -> T? {
+public func injectIfProvided<T>(for type: T.Type = T.self, scopedBy resolver: InjectContext? = nil) -> T? {
     try? tryInject(type, scopedBy: resolver)
 }
 
@@ -122,5 +124,5 @@ public func injectIfProvided<T>(for type: T.Type = T.self, scopedBy resolver: In
 ///   - scopable: Scopable that will provide scopeInjector to resolve the instance
 /// - Returns: instance resolved if found and nil if not
 public func injectIfProvided<T>(for type: T.Type = T.self, scopedBy scopable: Scopable) -> T? {
-    injectIfProvided(for: type, scopedBy: scopable.scopeInjector)
+    injectIfProvided(for: type, scopedBy: scopable.scopeContext)
 }
