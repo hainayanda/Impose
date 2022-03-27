@@ -1,5 +1,5 @@
 //
-//  InjectResolving.swift
+//  InjectContext.swift
 //  Impose
 //
 //  Created by Nayanda Haberty on 24/03/22.
@@ -9,31 +9,35 @@ import Foundation
 
 // MARK: InjectResolving
 
-public protocol InjectResolving: AnyObject {
+public protocol InjectContext: AnyObject {
     func resolve<T>(_ type: T.Type) throws -> T
 }
 
 // MARK: InjectResolver
 
-public class InjectResolver: InjectResolving {
+public class InjectResolver: InjectContext {
     
-    var resolvers: [TypeHashable: InstanceResolver]
-    var cachedResolvers: [TypeHashable: InstanceResolver]
+    var mappedResolvers: [TypeHashable: InstanceResolver]
+    var cachedMappedResolvers: [TypeHashable: InstanceResolver]
+    var resolvers: [InstanceResolver]
     
     /// Default init
     public init() {
-        self.resolvers = [:]
-        self.cachedResolvers = [:]
+        self.mappedResolvers = [:]
+        self.cachedMappedResolvers = [:]
+        self.resolvers = []
     }
     
     // MARK: Resolve
     
-    /// resolve instance from the given type. It will throws error if occured
+    /// Resolve instance from the given type. It will throws error if occured.
+    /// Time complexity will be O(log n) and O(n) for worst case scenario.
+    /// At the worst scenario, it will then cached the type and provider so at the next method call with the same type it will O(log n)
     /// - Parameter type: type
     /// - Throws: ImposeError
     /// - Returns: instance resolved
     public func resolve<T>(_ type: T.Type) throws -> T {
-        guard let resolver = resolvers[type] ?? cachedResolvers[type] else {
+        guard let resolver = mappedResolvers[type] ?? cachedMappedResolvers[type] else {
             return try findAndCachedCompatibleInstance(of: type)
         }
         guard let instance = resolver.resolveInstance() as? T else {
@@ -53,7 +57,7 @@ public class InjectResolver: InjectResolving {
             guard let instance = resolver.resolveInstance() as? T else {
                 continue
             }
-            cachedResolvers[type] = resolver
+            cachedMappedResolvers[type] = resolver
             return instance
         }
         throw ImposeError(
@@ -65,7 +69,7 @@ public class InjectResolver: InjectResolving {
     // MARK: Internal Methods
     
     func findPotentialProviders<T>(for type: T.Type) -> [InstanceResolver] {
-        resolvers.values.reduce([InstanceResolver]()) { partialResult, value in
+        resolvers.reduce([InstanceResolver]()) { partialResult, value in
             guard value.isPotentialResolver(of: type) else {
                 return partialResult
             }
@@ -77,7 +81,14 @@ public class InjectResolver: InjectResolving {
         }
     }
     
-    func cleanCachedAndGroup() {
-        cachedResolvers.removeAll()
+    func cleanCachedAndRepopulate() {
+        cachedMappedResolvers.removeAll()
+        resolvers = mappedResolvers.reduce([]) { partialResult, pair in
+            let extracted = resolvers.contains { $0 === pair.value }
+            guard !extracted else { return partialResult }
+            var result = partialResult
+            result.append(pair.value)
+            return result
+        }
     }
 }
