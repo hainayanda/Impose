@@ -47,9 +47,18 @@ public class Injector: InjectResolver {
     
     // MARK: Scoped
     
-    public func scopedInjector() -> InjectResolving {
+    public func newScopedContext() -> InjectContext {
         let resolver = InjectResolver()
-        resolver.resolvers = scopedResolver.resolvers.withNoInstances()
+        let mappedResolvers = scopedResolver.mappedResolvers.withNoInstances()
+        let allResolvers: [InstanceResolver] = mappedResolvers.reduce([]) { partialResult, pair in
+            let extracted = resolvers.contains { $0 === pair.value }
+            guard !extracted else { return partialResult }
+            var result = partialResult
+            result.append(pair.value)
+            return result
+        }
+        resolver.mappedResolvers = mappedResolvers
+        resolver.resolvers = allResolvers
         return resolver
     }
     
@@ -61,8 +70,8 @@ public class Injector: InjectResolver {
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
     public func addTransient<T>(for anyType: Any.Type, resolver: @escaping () -> T) {
-        resolvers[anyType] = FactoryInstanceProvider(resolver: resolver)
-        cleanCachedAndGroup()
+        mappedResolvers[anyType] = FactoryInstanceProvider(resolver: resolver)
+        cleanCachedAndRepopulate()
     }
     
     /// provide transient resolver for the given type
@@ -73,65 +82,70 @@ public class Injector: InjectResolver {
     public func addTransient<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
         let resolver = FactoryInstanceProvider(resolver: resolver)
         for type in anyTypes {
-            resolvers[type] = resolver
+            mappedResolvers[type] = resolver
         }
-        cleanCachedAndGroup()
+        cleanCachedAndRepopulate()
     }
     
     // MARK: Singleton
     
     /// provide singleton resolver for the given type
-    /// it will just create an instance once and reused it if asked again
+    /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
     public func addSingleton<T>(for anyType: Any.Type, resolver: @escaping () -> T) {
-        resolvers[anyType] = SingleInstanceProvider(resolver: resolver)
-        cleanCachedAndGroup()
+        mappedResolvers[anyType] = SingleInstanceProvider(resolver: resolver)
+        cleanCachedAndRepopulate()
     }
     
     /// provide singleton resolver for the given type
-    /// it will just create an instance once and reused it if asked again
+    /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
     public func addSingleton<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
         let resolver = SingleInstanceProvider(resolver: resolver)
         for type in anyTypes {
-            resolvers[type] = resolver
+            mappedResolvers[type] = resolver
         }
-        cleanCachedAndGroup()
+        cleanCachedAndRepopulate()
     }
     
     // MARK: Scoped
     
     /// provide scoped resolver for the given type
-    /// it will just create an instance once and reused it if asked again until context call release()
+    /// it basically a singleton but in scoped manner.
+    /// it will reused the same instance in same scoped
+    /// if there is no scope, then it will act like a singleton
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
     public func addScoped<T>(for anyType: Any.Type, resolver: @escaping () -> T) {
-        scopedResolver.resolvers[anyType] = SingleInstanceProvider(resolver: resolver)
-        scopedResolver.cleanCachedAndGroup()
+        scopedResolver.mappedResolvers[anyType] = SingleInstanceProvider(resolver: resolver)
+        scopedResolver.cleanCachedAndRepopulate()
     }
     
-    /// provide singleton resolver for the given type
-    /// it will just create an instance once and reused it if asked again until context call release()
+    /// provide scoped resolver for the given type
+    /// it basically a singleton but in scoped manner.
+    /// it will reused the same instance in same scoped
+    /// if there is no scope, then it will act like a singleton
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
     public func addScoped<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
         let resolver = SingleInstanceProvider(resolver: resolver)
         for type in anyTypes {
-            scopedResolver.resolvers[type] = resolver
+            scopedResolver.mappedResolvers[type] = resolver
         }
-        scopedResolver.cleanCachedAndGroup()
+        scopedResolver.cleanCachedAndRepopulate()
     }
     
     // MARK: Resolve
     
-    
-    /// resolve instance from the given type. It will throws error if occured
+    /// Resolve instance from the given type. It will throws error if occured.
+    /// Time complexity will be O(log n) and O(n) for worst case scenario.
+    /// At the worst scenario, it will then cached the type and provider so at the next method call with the same type it will O(log n)
     /// - Parameter type: type
     /// - Throws: ImposeError
     /// - Returns: instance resolved
@@ -179,7 +193,7 @@ public extension Injector {
     // MARK: Singleton
     
     /// provide singleton resolver for the given type
-    /// it will just create an instance once and reused it if asked again
+    /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
@@ -188,7 +202,7 @@ public extension Injector {
     }
     
     /// provide singleton resolver for the given type
-    /// it will just create an instance once and reused it if asked again
+    /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
@@ -199,7 +213,9 @@ public extension Injector {
     // MARK: Scoped
     
     /// provide scoped resolver for the given type
-    /// it will just create an instance once and reused it if asked again until context call release()
+    /// it basically a singleton but in scoped manner.
+    /// it will reused the same instance in same scoped
+    /// if there is no scope, then it will act like a singleton
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
@@ -207,8 +223,10 @@ public extension Injector {
         addScoped(for: anyType, resolver: resolver)
     }
     
-    /// provide singleton resolver for the given type
-    /// it will just create an instance once and reused it if asked again until context call release()
+    /// provide scoped resolver for the given type
+    /// it basically a singleton but in scoped manner.
+    /// it will reused the same instance in same scoped
+    /// if there is no scope, then it will act like a singleton
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
