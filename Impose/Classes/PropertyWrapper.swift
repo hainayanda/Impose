@@ -14,11 +14,30 @@ protocol ScopeInjectable: AnyObject {
 @propertyWrapper
 /// The wrapper of inject(for:) method
 public class Injected<T>: ScopeInjectable, ScopedInitiable {
+    private var assignedManually: Bool = false
+    private lazy var _wrappedValue: T? = inject(T.self, scopedBy: scopeContext)
     public var wrappedValue: T {
-        inject(T.self, scopedBy: scopeContext)
+        get {
+            guard let wrappedValue = _wrappedValue else {
+                let value = inject(T.self, scopedBy: scopeContext)
+                _wrappedValue = value
+                return value
+            }
+            return wrappedValue
+        } set {
+            assignedManually = true
+            _wrappedValue = newValue
+        }
     }
     
-    var scopeContext: InjectContext?
+    var scopeContext: InjectContext? {
+        didSet {
+            guard !assignedManually else {
+                return
+            }
+            _wrappedValue = nil
+        }
+    }
     
     /// Default init
     public init() { }
@@ -35,23 +54,38 @@ public class Injected<T>: ScopeInjectable, ScopedInitiable {
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
 public class SafelyInjected<T>: ScopeInjectable, ScopedInitiable {
+    private var assignedManually: Bool = false
+    private lazy var _wrappedValue: T? = injectIfProvided(for: T.self, scopedBy: scopeContext)
     public var wrappedValue: T? {
-        injectIfProvided(for: T.self, scopedBy: scopeContext)
+        get {
+            guard !assignedManually else {
+                return _wrappedValue
+            }
+            guard let wrappedValue = _wrappedValue else {
+                _wrappedValue = injectIfProvided(for: T.self, scopedBy: scopeContext)
+                return _wrappedValue
+            }
+            return wrappedValue
+        } set {
+            assignedManually = true
+            _wrappedValue = newValue
+        }
     }
     
-    var scopeContext: InjectContext?
+    var scopeContext: InjectContext? {
+        didSet {
+            guard !assignedManually else {
+                return
+            }
+            _wrappedValue = nil
+        }
+    }
     
     /// Default init
     public init() { }
     
     public required init(using context: InjectContext) {
         scopeContext = context
-    }
-    
-    public static func scoped(by context: InjectContext) -> SafelyInjected<T> {
-        let wrapper = SafelyInjected()
-        wrapper.applyScope(by: context)
-        return wrapper
     }
     
     func applyScope(by context: InjectContext) {
