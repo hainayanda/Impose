@@ -93,7 +93,7 @@ class InjectTests: QuickSpec {
                 Injector.shared.addScoped(for: GrandGrandChildDependency.self, GrandGrandChildDependency())
             }
             it("should inject from property wrapper with nearest type") {
-                let injected = WrappedInject()
+                let injected = WrappedInject(using: Injector.shared.newScopedContext())
                 expect(injected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
@@ -109,7 +109,7 @@ class InjectTests: QuickSpec {
                 expect(injected.sub.childDependency === injected.childDependency).to(beTrue())
                 expect(injected.sub.grandChildDependency === injected.grandChildDependency).to(beTrue())
                 
-                let newInjected = WrappedInject()
+                let newInjected = WrappedInject(using: Injector.shared.newScopedContext())
                 expect(newInjected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
@@ -133,12 +133,12 @@ class InjectTests: QuickSpec {
                 expect(injected.sub.grandChildDependency === newInjected.sub.grandChildDependency).to(beFalse())
             }
             it("should inject from property wrapper with nearest type") {
-                let injected = WrappedSafeInject()
+                let injected = WrappedSafeInject(using: Injector.shared.newScopedContext())
                 expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beTrue())
-                let newInjected = WrappedSafeInject()
+                let newInjected = WrappedSafeInject(using: Injector.shared.newScopedContext())
                 expect(newInjected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(newInjected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))

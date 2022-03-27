@@ -17,12 +17,6 @@ public protocol ScopedInitiable {
     init(using context: InjectContext)
 }
 
-public extension ScopedInitiable {
-    init() {
-        self.init(using: Injector.shared.newScopedContext())
-    }
-}
-
 public typealias ScopableInitiable = ScopedInitiable & Scopable
 
 fileprivate var scopeContextKey: String = "scopeContextKey"

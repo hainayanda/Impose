@@ -23,6 +23,8 @@ public class WrappedSafeInject: ScopableInitiable {
         _childDependency = .init(using: context)
         _grandChildDependency = .init(using: context)
     }
+    
+    public init() { }
 }
 
 public class InitSafeInject: ScopableInitiable {

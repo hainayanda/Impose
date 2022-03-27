@@ -21,6 +21,8 @@ public class WrappedInjectSub: ScopableInitiable {
     public required init(using context: InjectContext) {
         scoped(by: context)
     }
+    
+    public init() { }
 }
 
 public class WrappedInject: WrappedInjectSub {
@@ -31,6 +33,11 @@ public class WrappedInject: WrappedInjectSub {
     public required init(using context: InjectContext) {
         sub = .init()
         super.init(using: context)
+    }
+    
+    public override init() {
+        sub = .init()
+        super.init()
     }
 }
 
