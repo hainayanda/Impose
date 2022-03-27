@@ -15,4 +15,14 @@ extension Dictionary where Value == InstanceResolver {
             return result
         }
     }
+    
+    var uniqueValueInstances: [Value] {
+        self.reduce([]) { partialResult, pair in
+            let extracted = partialResult.contains { $0 === pair.value }
+            guard !extracted else { return partialResult }
+            var result = partialResult
+            result.append(pair.value)
+            return result
+        }
+    }
 }

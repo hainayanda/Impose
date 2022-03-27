@@ -83,12 +83,6 @@ public class InjectResolver: InjectContext {
     
     func cleanCachedAndRepopulate() {
         cachedMappedResolvers.removeAll()
-        resolvers = mappedResolvers.reduce([]) { partialResult, pair in
-            let extracted = resolvers.contains { $0 === pair.value }
-            guard !extracted else { return partialResult }
-            var result = partialResult
-            result.append(pair.value)
-            return result
-        }
+        resolvers = mappedResolvers.uniqueValueInstances
     }
 }

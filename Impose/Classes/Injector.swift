@@ -46,18 +46,12 @@ public class Injector: InjectResolver {
     // MARK: Scoped
     
     public func newScopedContext() -> InjectContext {
-        let resolver = InjectResolver()
+        let context = InjectResolver()
         let mappedResolvers = scopedResolver.mappedResolvers.withNoInstances()
-        let allResolvers: [InstanceResolver] = mappedResolvers.reduce([]) { partialResult, pair in
-            let extracted = resolvers.contains { $0 === pair.value }
-            guard !extracted else { return partialResult }
-            var result = partialResult
-            result.append(pair.value)
-            return result
-        }
-        resolver.mappedResolvers = mappedResolvers
-        resolver.resolvers = allResolvers
-        return resolver
+        let allResolvers: [InstanceResolver] = mappedResolvers.uniqueValueInstances
+        context.mappedResolvers = mappedResolvers
+        context.resolvers = allResolvers
+        return context
     }
     
     // MARK: Transient
