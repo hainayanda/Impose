@@ -8,42 +8,50 @@
 import Foundation
 
 public protocol Scopable {
-    var scopeInjector: InjectResolving { get }
-    func scoped(by injector: InjectResolving)
-    func scoped(from scope: Scopable)
-    func applyAsRootScopedInjection()
+    var scopeContext: InjectContext { get }
+    func scoped(by context: InjectContext)
+    func scopedUsingSameContext(as scope: Scopable)
 }
 
-fileprivate var scopeInjectorKey: String = "scopeInjectorKey"
+public protocol ScopedInitiable {
+    init(using context: InjectContext)
+}
+
+public extension ScopedInitiable {
+    init() {
+        self.init(using: Injector.shared.newScopedContext())
+    }
+}
+
+public typealias ScopableInitiable = ScopedInitiable & Scopable
+
+fileprivate var scopeContextKey: String = "scopeContextKey"
 
 public extension Scopable {
-    internal var currentInjector: InjectResolving? {
-        guard let injector = objc_getAssociatedObject(self, &scopeInjectorKey) as? InjectResolving else {
+    internal var currentContext: InjectContext? {
+        guard let context = objc_getAssociatedObject(self, &scopeContextKey) as? InjectContext else {
             return nil
         }
-        return injector
+        return context
     }
-    var scopeInjector: InjectResolving {
-        guard let injector = currentInjector else {
-            let newInjector = Injector.shared.scopedInjector()
-            scoped(by: newInjector)
-            return newInjector
+    
+    var scopeContext: InjectContext {
+        guard let context = currentContext else {
+            let newContext = Injector.shared.newScopedContext()
+            scoped(by: newContext)
+            return newContext
         }
-        return injector
+        return context
     }
     
-    func scoped(by injector: InjectResolving) {
-        if currentInjector === injector { return }
-        objc_setAssociatedObject(self, &scopeInjectorKey, injector, .OBJC_ASSOCIATION_RETAIN)
+    func scoped(by context: InjectContext) {
+        if currentContext === context { return }
+        objc_setAssociatedObject(self, &scopeContextKey, context, .OBJC_ASSOCIATION_RETAIN)
         let reflection = Mirror(reflecting: self)
-        reflection.setInjectedToBeScoped(by: injector)
+        reflection.setInjectedToBeScoped(by: context)
     }
     
-    func scoped(from scope: Scopable) {
-        scoped(by: scope.scopeInjector)
-    }
-    
-    func applyAsRootScopedInjection() {
-        scoped(by: Injector.shared.scopedInjector())
+    func scopedUsingSameContext(as scope: Scopable) {
+        scoped(by: scope.scopeContext)
     }
 }
