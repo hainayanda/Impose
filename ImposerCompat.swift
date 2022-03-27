@@ -15,7 +15,7 @@ public enum InjectOption {
 }
 
 public extension Imposer {
-    @available(*, deprecated, message: "Use addSingleton or addTransient instead, will be removed in next release")
+    @available(*, deprecated, message: "Use addSingleton or addTransient instead")
     func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ provider: @escaping @autoclosure () -> T) {
         switch option {
         case .singleInstance:
@@ -25,7 +25,7 @@ public extension Imposer {
         }
     }
     
-    @available(*, deprecated, message: "Use addSingleton or addTransient instead, will be removed in next release")
+    @available(*, deprecated, message: "Use addSingleton or addTransient instead")
     func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ closureProvider: @escaping () -> T) {
         switch option {
         case .singleInstance:
@@ -35,7 +35,7 @@ public extension Imposer {
         }
     }
     
-    @available(*, deprecated, message: "Use shared.addSingleton or shared.addTransient instead, will be removed in next release")
+    @available(*, deprecated, message: "Use shared.addSingleton or shared.addTransient instead")
     static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ provider: @escaping @autoclosure () -> T) {
         switch option {
         case .singleInstance:
@@ -45,7 +45,7 @@ public extension Imposer {
         }
     }
     
-    @available(*, deprecated, message: "Use shared.addSingleton or shared.addTransient instead, will be removed in next release")
+    @available(*, deprecated, message: "Use shared.addSingleton or shared.addTransient instead")
     static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ closureProvider: @escaping () -> T) {
         switch option {
         case .singleInstance:
