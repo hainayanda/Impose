@@ -9,26 +9,55 @@
 import Foundation
 import Impose
 
-public class WrappedInject {
+public class WrappedInjectSub: ScopableInitiable {
+    
     @Injected
     var dependency: Dependency
     @Injected
     var childDependency: ChildDependency
     @Injected
     var grandChildDependency: GrandChildDependency
+    
+    public required init(using context: InjectContext) {
+        scoped(by: context)
+    }
+    
+    public init() { }
 }
 
-public class InitInject {
+public class WrappedInject: WrappedInjectSub {
+    
+    @Scoped
+    var sub: WrappedInjectSub
+    
+    public required init(using context: InjectContext) {
+        sub = .init()
+        super.init(using: context)
+    }
+    
+    public override init() {
+        sub = .init()
+        super.init()
+    }
+}
+
+public class InitInject: ScopableInitiable {
     
     var dependency: Dependency
     var childDependency: ChildDependency
     var grandChildDependency: GrandChildDependency
     
-    init(dependency: Dependency = inject(Dependency.self),
-         someDependency: ChildDependency = inject(ChildDependency.self),
-         someOtherDependency: GrandChildDependency = inject(GrandChildDependency.self)) {
+    init(dependency: Dependency = inject(),
+         someDependency: ChildDependency = inject(),
+         someOtherDependency: GrandChildDependency = inject()) {
         self.dependency = dependency
         self.childDependency = someDependency
         self.grandChildDependency = someOtherDependency
+    }
+    
+    public required init(using context: InjectContext) {
+        dependency = inject(scopedBy: context)
+        childDependency = inject(scopedBy: context)
+        grandChildDependency = inject(scopedBy: context)
     }
 }

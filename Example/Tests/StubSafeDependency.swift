@@ -9,26 +9,41 @@
 import Foundation
 import Impose
 
-public class WrappedSafeInject {
+public class WrappedSafeInject: ScopableInitiable {
+    
     @SafelyInjected
     var dependency: Dependency?
     @SafelyInjected
     var childDependency: ChildDependency?
     @SafelyInjected
     var grandChildDependency: GrandChildDependency?
+    
+    public required init(using context: InjectContext) {
+        _dependency = .init(using: context)
+        _childDependency = .init(using: context)
+        _grandChildDependency = .init(using: context)
+    }
+    
+    public init() { }
 }
 
-public class InitSafeInject {
+public class InitSafeInject: ScopableInitiable {
     
     var dependency: Dependency?
     var childDependency: ChildDependency?
     var grandChildDependency: GrandChildDependency?
     
-    init(dependency: Dependency? = injectIfProvided(for: Dependency.self),
-         someDependency: ChildDependency? = injectIfProvided(for: ChildDependency.self),
-         someOtherDependency: GrandChildDependency? = injectIfProvided(for: GrandChildDependency.self)) {
+    init(dependency: Dependency? = injectIfProvided(),
+         someDependency: ChildDependency? = injectIfProvided(),
+         someOtherDependency: GrandChildDependency? = injectIfProvided()) {
         self.dependency = dependency
         self.childDependency = someDependency
         self.grandChildDependency = someOtherDependency
+    }
+    
+    public required init(using context: InjectContext) {
+        dependency = injectIfProvided(scopedBy: context)
+        childDependency = injectIfProvided(scopedBy: context)
+        grandChildDependency = injectIfProvided(scopedBy: context)
     }
 }

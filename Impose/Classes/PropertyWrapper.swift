@@ -7,123 +7,131 @@
 
 import Foundation
 
-protocol InjectedProperty: AnyObject {
-    var injector: Injector { get }
-    var scopedInjector: Injector? { get set }
-}
-
-extension InjectedProperty {
-    var injector: Injector {
-        scopedInjector ?? Injector.shared
-    }
+protocol ScopeInjectable: AnyObject {
+    func applyScope(by context: InjectContext)
 }
 
 @propertyWrapper
 /// The wrapper of inject(for:) method
-public class Injected<T>: InjectedProperty {
-    public lazy var wrappedValue: T = {
-        let result = resolveAndGetContext()
-        self.context = result.context
-        return result.value
-    }()
-    
-    lazy var context: ImposeContext? = {
-        let result = resolveAndGetContext()
-        self.wrappedValue = result.value
-        return result.context
-    }()
-    
-    var scopedInjector: Injector? {
-        didSet {
-            let result = resolveAndGetContext()
-            self.wrappedValue = result.value
-            self.context = result.context
+public class Injected<T>: ScopeInjectable, ScopedInitiable {
+    private var assignedManually: Bool = false
+    private lazy var _wrappedValue: T? = inject(T.self, scopedBy: scopeContext)
+    public var wrappedValue: T {
+        get {
+            guard let wrappedValue = _wrappedValue else {
+                let value = inject(T.self, scopedBy: scopeContext)
+                _wrappedValue = value
+                return value
+            }
+            return wrappedValue
+        } set {
+            assignedManually = true
+            _wrappedValue = newValue
         }
     }
     
-    let rules: InjectionRules
-    let type: ImposerType
-    
-    @available(*, deprecated, message: "Use no param instead, will be removed in next release")
-    public init(type: ImposerType) {
-        self.rules = .nearest
-        self.type = type
-    }
-    
-    @available(*, deprecated, message: "Use no param instead, will be removed in next release")
-    public init(ifNoMatchUse rules: InjectionRules = .nearest) {
-        self.rules = rules
-        self.type = .primary
+    var scopeContext: InjectContext? {
+        didSet {
+            guard !assignedManually else {
+                return
+            }
+            _wrappedValue = nil
+        }
     }
     
     /// Default init
-    public init() {
-        self.rules = .nearest
-        self.type = .primary
+    public init() { }
+    
+    public required init(using context: InjectContext) {
+        scopeContext = context
     }
     
-    public var projectedValue: ImposeContext? {
-        context
-    }
-    
-    func resolveAndGetContext() -> (value: T, context: ImposeContext?){
-        do {
-            let value = try injector.resolve(T.self)
-            let context = injector.context(of: T.self)
-            return (value, context)
-        } catch {
-            // will be removed on next release
-            let value: T = inject(from: type, ifNoMatchUse: rules)
-            return (value, nil)
-        }
-    }
-}
-
-@propertyWrapper
-@available(*, deprecated, message: "Use ModuleProvider instead, will be removed in next release")
-public class UnforceInjected<T> {
-    public lazy var wrappedValue: T? = unforceInject(from: type, ifNoMatchUse: rules)
-    let rules: InjectionRules
-    let type: ImposerType
-    
-    public init(type: ImposerType = .primary, ifNoMatchUse rules: InjectionRules = .nearest) {
-        self.rules = rules
-        self.type = type
+    func applyScope(by context: InjectContext) {
+        self.scopeContext = context
     }
 }
 
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
-public class SafelyInjected<T>: InjectedProperty {
-    public lazy var wrappedValue: T? = {
-        let result = resolveAndGetContext()
-        self.context = result.context
-        return result.value
-    }()
-    
-    lazy var context: ImposeContext? = {
-        let result = resolveAndGetContext()
-        self.wrappedValue = result.value
-        return result.context
-    }()
-    
-    var scopedInjector: Injector? {
-        didSet {
-            let result = resolveAndGetContext()
-            self.wrappedValue = result.value
-            self.context = result.context
+public class SafelyInjected<T>: ScopeInjectable, ScopedInitiable {
+    private var assignedManually: Bool = false
+    private lazy var _wrappedValue: T? = injectIfProvided(for: T.self, scopedBy: scopeContext)
+    public var wrappedValue: T? {
+        get {
+            guard !assignedManually else {
+                return _wrappedValue
+            }
+            guard let wrappedValue = _wrappedValue else {
+                _wrappedValue = injectIfProvided(for: T.self, scopedBy: scopeContext)
+                return _wrappedValue
+            }
+            return wrappedValue
+        } set {
+            assignedManually = true
+            _wrappedValue = newValue
         }
     }
+    
+    var scopeContext: InjectContext? {
+        didSet {
+            guard !assignedManually else {
+                return
+            }
+            _wrappedValue = nil
+        }
+    }
+    
     /// Default init
     public init() { }
     
-    public var projectedValue: ImposeContext? {
-        context
+    public required init(using context: InjectContext) {
+        scopeContext = context
     }
     
-    func resolveAndGetContext() -> (value: T?, context: ImposeContext?){
-        let value = try? injector.resolve(T.self)
-        let context = injector.context(of: T.self)
-        return (value, context)
+    func applyScope(by context: InjectContext) {
+        self.scopeContext = context
+    }
+}
+
+@propertyWrapper
+/// The wrapper of injectIfProvided(for:) method
+public class Scoped<T: Scopable>: ScopeInjectable {
+    public var wrappedValue: T {
+        didSet {
+            injectWrappedIfNeeded()
+        }
+    }
+    
+    var scopeContext: InjectContext? {
+        didSet {
+            injectWrappedIfNeeded()
+        }
+    }
+    
+    public init(wrappedValue: T) {
+        self.wrappedValue = wrappedValue
+    }
+    
+    public init(wrappedValue: T, context: InjectContext) {
+        self.wrappedValue = wrappedValue
+        self.scopeContext = context
+        injectWrappedIfNeeded()
+    }
+    
+    public init(wrappedValue: T, scope: Scopable) {
+        self.wrappedValue = wrappedValue
+        self.scopeContext = scope.scopeContext
+        injectWrappedIfNeeded()
+    }
+    
+    func injectWrappedIfNeeded() {
+        guard let scopeContext = scopeContext else {
+            return
+        }
+        wrappedValue.scoped(by: scopeContext)
+    }
+    
+    func applyScope(by context: InjectContext) {
+        self.scopeContext = context
     }
 }

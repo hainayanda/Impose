@@ -162,55 +162,73 @@ class InjectedByInit {
 
 ## Scoped Injector
 
-You can scoped your injector so all of its dependency instance is different than shared injector:
+You can scoped your dependency so it will create a new singleton instance within a scope:
 
 ```swift
-// this will create a new cloned injector, with all the resolver in initial state
-var myInjector = Injector.shared.asScopedInjector()
+Injector.shared.addScoped(for: Dependency.self, SomeDependency())
 ```
 
-Then you can use the injector as a custom scoped injector:
+To scoped object, you need to implement Scopable protocol, as a mark that this object could have different scoped than global dependencies. Without scoped, this will behave like singleton dependency:
 
 ```swift
-class InjectedByPropertyWrapper {
-    @Injected var dependency: Dependency?
-    
-    init(_ injector: Injector) {
-        // will inject all Injected property wrapper using given injector instead of the shared ones
-        inject(self, with: injector)
-    }
+class MyObject: Scopable {
+    @Injected var dependency: Dependency
     
     ...
     ...
 }
 ```
 
-## Impose Context
-
-You can manually control the instance creation by context scoped:
+Scopable is declared like this:
 
 ```swift
-// or use default Injector.sharedContext if you want
-let myContext = ImposeContext()
-
-Injector.shared.addScoped(for: Dependency.self, in: myContext, SomeDependency())
+public protocol Scopable {
+    var scopeContext: InjectContext { get }
+    func scoped(by context: InjectContext)
+    func scopedUsingSameContext(as scope: Scopable)
+}
 ```
 
-It will then will behave like singleton dependency until myContext is released by ARC or manually:
+you can create your context like this:
 
 ```swift
-// it will release all the created instance from Injector that bind with this context
-// if after this moment new instance is required, it will then create a new one
-myContext.release()
+let myContext = Injector.shared.newScopedContext()
 ```
 
-You can always get a context later if you don't want to keep it manually:
+then use it for any object you need so it will then inject scoped dependency using those context instead the global one:
 
 ```swift
-let myContext = Injector.context(of: Dependency.self)
+myObject.scoped(by: myContext)
+myOtherObject.scoped(by: myContext)
+myAnyOtherObject.scopedUsingSameContext(as: myObject)
 ```
 
-it will return the context if the resolver is added by using scoped, otherwise it will return nil
+All of those three object will have same instance of same scoped dependency. Any other object with no scope or different scope will have different instance.
+
+You can use `ScopableInitiable` instead if you want to have the capabilities to have init with scope:
+
+```swift
+class MyObject: ScopableInitiable {
+    @Injected var dependency: Dependency
+    
+    required init(using context: InjectContext) {
+        scoped(by: context)
+    }
+    ...
+    ...
+}
+```
+
+There is one property wrapped nemed Scoped that can be used to make sure that property will be scoped using same context when `scoped(by:)` is called or when property is assigned:
+
+```swift
+class MyObject: Scopable {
+    @Injected var dependency: Dependency
+    @Scoped var myScopable: ScopableObject = .init()
+    ...
+    ...
+}
+```
 
 ## Multiple Type for one Provider
 
