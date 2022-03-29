@@ -230,6 +230,10 @@ class MyObject: Scopable {
 }
 ```
 
+## Circular Dependency
+
+`Injected` and `SafelyInjected` propertyWrapper will resolve dependency lazily, thus it will work even if you have a circular dependency. But it will rise stack overflow error if you use inject function instead on init since it will resolve the dependency right away. Even tho circular dependency is not recommended, it will be better if you use propertyWrapper instead for injection to avoid this problem.
+
 ## Multiple Type for one Provider
 
 You can register multiple type for one provider if you need to:
