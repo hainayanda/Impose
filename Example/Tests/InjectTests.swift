@@ -19,6 +19,8 @@ class InjectTests: QuickSpec {
                 Injector.shared.addSingleton(for: Dependency.self, ChildDependency())
                 Injector.shared.addSingleton(for: GrandChildDependency.self, GrandChildDependency())
                 Injector.shared.addSingleton(for: GrandGrandChildDependency.self, GrandGrandChildDependency())
+                Injector.shared.addSingleton(for: MyCircularB.self, MyB())
+                Injector.shared.addSingleton(for: MyCircularA.self, MyA())
             }
             it("should inject from property wrapper with nearest type") {
                 let injected = WrappedInject()
@@ -47,6 +49,12 @@ class InjectTests: QuickSpec {
                 expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beTrue())
+            }
+            it("should not error with circular dependency") {
+                let myA: MyCircularA = inject()
+                let myB: MyCircularB = inject()
+                expect(myA === myB.myCircularA).to(beTrue())
+                expect(myB === myA.myCircularB).to(beTrue())
             }
         }
         describe("transient test") {
@@ -55,6 +63,8 @@ class InjectTests: QuickSpec {
                 Injector.shared.addTransient(for: Dependency.self, ChildDependency())
                 Injector.shared.addTransient(for: GrandChildDependency.self, GrandChildDependency())
                 Injector.shared.addTransient(for: GrandGrandChildDependency.self, GrandGrandChildDependency())
+                Injector.shared.addTransient(for: MyCircularB.self, MyB())
+                Injector.shared.addTransient(for: MyCircularA.self, MyA())
             }
             it("should inject from property wrapper with nearest type") {
                 let injected = WrappedInject()
@@ -84,6 +94,12 @@ class InjectTests: QuickSpec {
                 expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beFalse())
             }
+            it("should not error with circular dependency") {
+                let myA: MyCircularA = inject()
+                let myB: MyCircularB = inject()
+                expect(myA === myB.myCircularA).to(beFalse())
+                expect(myB === myA.myCircularB).to(beFalse())
+            }
         }
         describe("scoped test") {
             beforeEach {
@@ -91,6 +107,8 @@ class InjectTests: QuickSpec {
                 Injector.shared.addScoped(for: Dependency.self, ChildDependency())
                 Injector.shared.addScoped(for: GrandChildDependency.self, GrandChildDependency())
                 Injector.shared.addScoped(for: GrandGrandChildDependency.self, GrandGrandChildDependency())
+                Injector.shared.addScoped(for: MyCircularB.self, MyB())
+                Injector.shared.addScoped(for: MyCircularA.self, MyA())
             }
             it("should inject from property wrapper with nearest type") {
                 let injected = WrappedInject(using: Injector.shared.newScopedContext())
@@ -145,6 +163,13 @@ class InjectTests: QuickSpec {
                 expect(newInjected.dependency === newInjected.childDependency).to(beTrue())
                 expect(injected.dependency === newInjected.dependency).to(beFalse())
                 expect(injected.childDependency === newInjected.childDependency).to(beFalse())
+            }
+            it("should not error with circular dependency") {
+                let context = Injector.shared.newScopedContext()
+                let myA: MyCircularA = inject(scopedBy: context)
+                let myB: MyCircularB = inject(scopedBy: context)
+                expect(myA === myB.myCircularA).to(beTrue())
+                expect(myB === myA.myCircularB).to(beTrue())
             }
         }
         describe("negative test") {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2E0B6386955AA06DA5DBAFDF /* Pods_Impose_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */; };
+		BB27BABC27F2AAC600EE0A01 /* CircularDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB27BABB27F2AAC600EE0A01 /* CircularDependency.swift */; };
 		BB4A8A3827EB4BB400465EA3 /* InjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4A8A3727EB4BB400465EA3 /* InjectTests.swift */; };
 		BB575AD4258F4062007EA8B9 /* StubSafeDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB575AD3258F4062007EA8B9 /* StubSafeDependency.swift */; };
 		BB575AD7258F407F007EA8B9 /* Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB575AD6258F407F007EA8B9 /* Dependency.swift */; };
@@ -21,6 +22,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A2C7E7038EA72F35DA7F07F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		B6D72B213FF205AC5D7EE776 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		BB27BABB27F2AAC600EE0A01 /* CircularDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularDependency.swift; sourceTree = "<group>"; };
 		BB4A8A3727EB4BB400465EA3 /* InjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectTests.swift; sourceTree = "<group>"; };
 		BB575AD3258F4062007EA8B9 /* StubSafeDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubSafeDependency.swift; sourceTree = "<group>"; };
 		BB575AD6258F407F007EA8B9 /* Dependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependency.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				BBBE2961258EF96200C8DE2D /* StubDependency.swift */,
 				BB575AD3258F4062007EA8B9 /* StubSafeDependency.swift */,
 				BB575AD6258F407F007EA8B9 /* Dependency.swift */,
+				BB27BABB27F2AAC600EE0A01 /* CircularDependency.swift */,
 			);
 			name = Mock;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB27BABC27F2AAC600EE0A01 /* CircularDependency.swift in Sources */,
 				BBBE2962258EF96200C8DE2D /* StubDependency.swift in Sources */,
 				BB575AD7258F407F007EA8B9 /* Dependency.swift in Sources */,
 				BB575AD4258F4062007EA8B9 /* StubSafeDependency.swift in Sources */,
