@@ -105,7 +105,7 @@ Injector.shared.addSingleton(for: Dependency.self) {
 }
 ```
 
-the provider automatically just create one instance only from calling closure and reused the instance, so the closure only called once. If you want the provider to call closure for every injection, you can use addTransient method:
+the provider automatically just creates one instance only from calling closure and reused the instance, so the closure is only called once. If you want the provider to call closure for every injection, you can use `addTransient` method:
 
 ```swift
 Injector.shared.addTransient(for: Dependency.self, SomeDependency())
@@ -129,7 +129,7 @@ class InjectedByInit {
 
 ## Safe Injection
 
-Sometimes you just don't want your app to be throwing errors just because it's failing in dependency injection. In those cases, just use `@SafelyInjected` attribute or `injectIfProvided` function. It will return nil if injection fail:
+Sometimes you just don't want your app to be throwing errors just because it's failing in dependency injection. In those cases, just use `@SafelyInjected` attribute or `injectIfProvided` function. It will return nil if the injection fails:
 
 ```swift
 class InjectedByPropertyWrapper {
@@ -148,7 +148,7 @@ class InjectedByInit {
 }
 ```
 
-You can always give a closure or autoclosure to call if the injection fail:
+You can always give closure or auto closure to call if the injection fails:
 
 ```swift
 class InjectedByInit {
@@ -160,15 +160,23 @@ class InjectedByInit {
 }
 ```
 
+## Weak Provider
+
+You can introduce a weak provider, which will store the dependency created in a weak variable. This provider is a combination of singleton and transient providers which will recreate a dependency once needed and already removed by ARC. It will be useful if you need a dependency that will live until it's not used anymore:
+
+```swift
+Injector.shared.addWeakSingleton(for: Dependency.self, SomeDependency())
+```
+
 ## Scoped Injector
 
-You can scoped your dependency so it will create a new singleton instance within a scope:
+You can scope your dependency so it will create a new singleton instance within a scope:
 
 ```swift
 Injector.shared.addScoped(for: Dependency.self, SomeDependency())
 ```
 
-To scoped object, you need to implement Scopable protocol, as a mark that this object could have different scoped than global dependencies. Without scoped, this will behave like singleton dependency:
+To scope an object, you need to implement the Scopable protocol, as a mark that this object could have a different scope than global dependencies. Without a scope, this will behave like a singleton dependency:
 
 ```swift
 class MyObject: Scopable {
@@ -195,7 +203,7 @@ you can create your context like this:
 let myContext = Injector.shared.newScopedContext()
 ```
 
-then use it for any object you need so it will then inject scoped dependency using those context instead the global one:
+then use it for any object you need so it will then inject scoped dependency using that context instead of the global one:
 
 ```swift
 myObject.scoped(by: myContext)
@@ -203,9 +211,9 @@ myOtherObject.scoped(by: myContext)
 myAnyOtherObject.scopedUsingSameContext(as: myObject)
 ```
 
-All of those three object will have same instance of same scoped dependency. Any other object with no scope or different scope will have different instance.
+All of those three objects will have the same instance of the same scoped dependency. Any other object with no scope or different scope will have a different instance.
 
-You can use `ScopableInitiable` instead if you want to have the capabilities to have init with scope:
+You can use `ScopableInitiable` instead if you want to have the capabilities to have to init with scope:
 
 ```swift
 class MyObject: ScopableInitiable {
@@ -219,7 +227,7 @@ class MyObject: ScopableInitiable {
 }
 ```
 
-There is one property wrapped nemed Scoped that can be used to make sure that property will be scoped using same context when `scoped(by:)` is called or when property is assigned:
+There is one property wrapped named Scoped that can be used to make sure that property will be scoped using the same context when `scoped(by:)` is called or when the property is assigned:
 
 ```swift
 class MyObject: Scopable {
@@ -234,9 +242,9 @@ class MyObject: Scopable {
 
 `Injected` and `SafelyInjected` propertyWrapper will resolve dependency lazily, thus it will work even if you have a circular dependency. But it will rise stack overflow error if you use inject function instead on init since it will resolve the dependency right away. Even tho circular dependency is not recommended, it will be better if you use propertyWrapper instead for injection to avoid this problem.
 
-## Multiple Type for one Provider
+## Multiple Types for one Provider
 
-You can register multiple type for one provider if you need to:
+You can register multiple types for one provider if you need to:
 
 ```swift
 Injector.shared.addSingleton(for: [Dependency.self, OtherDependency.self], SomeDependency())
@@ -254,7 +262,7 @@ or even for scoped:
 Injector.shared.addScoped(for: [Dependency.self, OtherDependency.self], SomeDependency())
 ```
 
-## Multiple Injector
+## Multiple Injectors
 
 You could have multiple `Injector` to provide different dependencies for the same type:
 
@@ -268,10 +276,10 @@ secondaryInjector.addTransient(for: Dependency.self, Secondary())
 to use the other injector, switch it:
 
 ```swift
-Injector.swithInjector(to: secondaryInjector)
+Injector.switchInjector(to: secondaryInjector)
 ```
 
-to switch back is as easy as calling void method:
+to switch back is as easy as calling the void method:
 
 ```swift
 Injector.switchToDefaultInjector()
