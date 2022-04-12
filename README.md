@@ -160,15 +160,31 @@ class InjectedByInit {
 }
 ```
 
+## Singleton Provider
+
+The simplest injection Provider is Singleton provider. The provider just creates one instance, stores it, and reused the instance, so the closure is only called once. The instance will not be released until the Injector is released. It will be useful for shared instance dependencies:
+
+```swift
+Injector.shared.addSingleton(for: Dependency.self, SomeDependency())
+```
+
+## Transient Provider
+
+Different from Singleton, Transient will not store the dependency at all, it will just recreate the dependency every time it's needed. The closure will be stored strongly tho. It will be useful for services that store nothing:
+
+```swift
+Injector.shared.addTransient(for: Dependency.self, SomeDependency())
+```
+
 ## Weak Provider
 
-You can introduce a weak provider, which will store the dependency created in a weak variable. This provider is a combination of singleton and transient providers which will recreate a dependency once needed and already removed by ARC. It will be useful if you need a dependency that will live until it's not used anymore:
+This provider is a combination of singleton and transient providers. It will store the instance in a weak variable before returning it. Once the stored instance became nil, it will recreate a new instance for the next injection. The closure will be stored strongly tho. It will be useful for dependency that you want to use and shared but released when not used anymore:
 
 ```swift
 Injector.shared.addWeakSingleton(for: Dependency.self, SomeDependency())
 ```
 
-## Scoped Injector
+## Scoped Provider
 
 You can scope your dependency so it will create a new singleton instance within a scope:
 
