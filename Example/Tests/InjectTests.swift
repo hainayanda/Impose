@@ -284,6 +284,19 @@ class InjectTests: QuickSpec {
                 expect(childDependencyIdentifier).toNot(equal(newChildDependencyIdentifier))
                 expect(grandChildDependencyIdentifier).toNot(equal(newGrandChildDependencyIdentifier))
             }
+            it("should not create new dependency") {
+                let injected = WrappedInject()
+                let dependencyIdentifier = injected.dependency.creationCount
+                let childDependencyIdentifier = injected.childDependency.creationCount
+                let grandChildDependencyIdentifier = injected.grandChildDependency.creationCount
+                let newInjected = WrappedInject()
+                let newDependencyIdentifier = newInjected.dependency.creationCount
+                let newChildDependencyIdentifier = newInjected.childDependency.creationCount
+                let newGrandChildDependencyIdentifier = newInjected.grandChildDependency.creationCount
+                expect(dependencyIdentifier).to(equal(newDependencyIdentifier))
+                expect(childDependencyIdentifier).to(equal(newChildDependencyIdentifier))
+                expect(grandChildDependencyIdentifier).to(equal(newGrandChildDependencyIdentifier))
+            }
             it("should not error with circular dependency") {
                 let myA: MyCircularA = inject()
                 let myB: MyCircularB = inject()
