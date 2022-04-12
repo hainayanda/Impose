@@ -133,6 +133,33 @@ public class Injector: InjectResolver {
         scopedResolver.cleanCachedAndRepopulate()
     }
     
+    // MARK: Weak
+    
+    /// provide scoped resolver for the given type
+    /// it basically a singleton but stored in weak variable
+    /// it will recreate a new instance once weak varibale is nil
+    /// - Parameters:
+    ///   - anyType: type of resolver
+    ///   - resolver: closure that will be called to create instance if asked for given type
+    public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolver: @escaping () -> T) {
+        scopedResolver.mappedResolvers[anyType] = WeakSingleInstanceProvider(resolver: resolver)
+        scopedResolver.cleanCachedAndRepopulate()
+    }
+    
+    /// provide scoped resolver for the given type
+    /// it basically a singleton but stored in weak variable
+    /// it will recreate a new instance once weak varibale is nil
+    /// - Parameters:
+    ///   - anyTypes: types of resolver
+    ///   - resolver: closure that will be called to create instance if asked for given types
+    public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
+        let resolver = WeakSingleInstanceProvider(resolver: resolver)
+        for type in anyTypes {
+            scopedResolver.mappedResolvers[type] = resolver
+        }
+        scopedResolver.cleanCachedAndRepopulate()
+    }
+    
     // MARK: Resolve
     
     /// Resolve instance from the given type. It will throws error if occured.
@@ -224,5 +251,27 @@ public extension Injector {
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
     func addScoped<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) {
         addScoped(for: anyTypes, resolver: resolver)
+    }
+    
+    // MARK: Weak
+    
+    /// provide scoped resolver for the given type
+    /// it basically a singleton but stored in weak variable
+    /// it will recreate a new instance once weak varibale is nil
+    /// - Parameters:
+    ///   - anyType: type of resolver
+    ///   - resolver: closure that will be called to create instance if asked for given type
+    func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) {
+        addWeakSingleton(for: anyType, resolver: resolver)
+    }
+    
+    /// provide scoped resolver for the given type
+    /// it basically a singleton but stored in weak variable
+    /// it will recreate a new instance once weak varibale is nil
+    /// - Parameters:
+    ///   - anyTypes: types of resolver
+    ///   - resolver: closure that will be called to create instance if asked for given types
+    func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) {
+        addWeakSingleton(for: anyTypes, resolver: resolver)
     }
 }

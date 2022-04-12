@@ -50,6 +50,19 @@ class InjectTests: QuickSpec {
                 expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beTrue())
             }
+            it("should stored dependency strongly") {
+                let injected = WrappedInject()
+                let dependencyIdentifier = injected.dependency.creationCount
+                let childDependencyIdentifier = injected.childDependency.creationCount
+                let grandChildDependencyIdentifier = injected.grandChildDependency.creationCount
+                let newInjected = WrappedInject()
+                let newDependencyIdentifier = newInjected.dependency.creationCount
+                let newChildDependencyIdentifier = newInjected.childDependency.creationCount
+                let newGrandChildDependencyIdentifier = newInjected.grandChildDependency.creationCount
+                expect(dependencyIdentifier).to(equal(newDependencyIdentifier))
+                expect(childDependencyIdentifier).to(equal(newChildDependencyIdentifier))
+                expect(grandChildDependencyIdentifier).to(equal(newGrandChildDependencyIdentifier))
+            }
             it("should not error with circular dependency") {
                 let myA: MyCircularA = inject()
                 let myB: MyCircularB = inject()
@@ -93,6 +106,19 @@ class InjectTests: QuickSpec {
                 expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
                 expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
                 expect(injected.dependency === injected.childDependency).to(beFalse())
+            }
+            it("should not stored dependency") {
+                let injected = WrappedInject()
+                let dependencyIdentifier = injected.dependency.creationCount
+                let childDependencyIdentifier = injected.childDependency.creationCount
+                let grandChildDependencyIdentifier = injected.grandChildDependency.creationCount
+                let newInjected = WrappedInject()
+                let newDependencyIdentifier = newInjected.dependency.creationCount
+                let newChildDependencyIdentifier = newInjected.childDependency.creationCount
+                let newGrandChildDependencyIdentifier = newInjected.grandChildDependency.creationCount
+                expect(dependencyIdentifier).toNot(equal(newDependencyIdentifier))
+                expect(childDependencyIdentifier).toNot(equal(newChildDependencyIdentifier))
+                expect(grandChildDependencyIdentifier).toNot(equal(newGrandChildDependencyIdentifier))
             }
             it("should not error with circular dependency") {
                 let myA: MyCircularA = inject()
@@ -164,10 +190,116 @@ class InjectTests: QuickSpec {
                 expect(injected.dependency === newInjected.dependency).to(beFalse())
                 expect(injected.childDependency === newInjected.childDependency).to(beFalse())
             }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedSafeInject(using: Injector.shared.newScopedContext())
+                expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+                let newInjected = WrappedSafeInject(using: Injector.shared.newScopedContext())
+                expect(newInjected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(newInjected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(newInjected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(newInjected.dependency === newInjected.childDependency).to(beTrue())
+                expect(injected.dependency === newInjected.dependency).to(beFalse())
+                expect(injected.childDependency === newInjected.childDependency).to(beFalse())
+            }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedSafeInject(using: Injector.shared.newScopedContext())
+                expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+                let newInjected = WrappedSafeInject(using: Injector.shared.newScopedContext())
+                expect(newInjected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(newInjected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(newInjected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(newInjected.dependency === newInjected.childDependency).to(beTrue())
+                expect(injected.dependency === newInjected.dependency).to(beFalse())
+                expect(injected.childDependency === newInjected.childDependency).to(beFalse())
+            }
             it("should not error with circular dependency") {
                 let context = Injector.shared.newScopedContext()
                 let myA: MyCircularA = inject(scopedBy: context)
                 let myB: MyCircularB = inject(scopedBy: context)
+                expect(myA === myB.myCircularA).to(beTrue())
+                expect(myB === myA.myCircularB).to(beTrue())
+            }
+        }
+        describe("weak test") {
+            beforeEach {
+                Injector.switchInjector(to: Injector())
+                Injector.shared.addWeakSingleton(for: Dependency.self, ChildDependency())
+                Injector.shared.addWeakSingleton(for: GrandChildDependency.self, GrandChildDependency())
+                Injector.shared.addWeakSingleton(for: GrandGrandChildDependency.self, GrandGrandChildDependency())
+                Injector.shared.addWeakSingleton(for: MyCircularB.self, MyB())
+                Injector.shared.addWeakSingleton(for: MyCircularA.self, MyA())
+            }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedInject()
+                expect(injected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+            }
+            it("should inject from init with nearest type") {
+                let injected = InitInject()
+                expect(injected.dependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+            }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedSafeInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+            }
+            it("should inject from init with nearest type") {
+                let injected = InitSafeInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+            }
+            it("should inject from property wrapper with nearest type") {
+                let injected = WrappedSafeInject()
+                expect(injected.dependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.childDependency?.explainMyself()).to(equal("I am ChildDependency and Injected"))
+                expect(injected.grandChildDependency?.explainMyself()).to(equal("I am GrandChildDependency and Injected"))
+                expect(injected.dependency === injected.childDependency).to(beTrue())
+            }
+            it("should stored dependency weakly") {
+                var injected: WrappedInject? = WrappedInject()
+                let dependencyIdentifier = injected!.dependency.creationCount
+                let childDependencyIdentifier = injected!.childDependency.creationCount
+                let grandChildDependencyIdentifier = injected!.grandChildDependency.creationCount
+                // recreate dependency
+                injected = WrappedInject()
+                let newDependencyIdentifier = injected!.dependency.creationCount
+                let newChildDependencyIdentifier = injected!.childDependency.creationCount
+                let newGrandChildDependencyIdentifier = injected!.grandChildDependency.creationCount
+                expect(dependencyIdentifier).toNot(equal(newDependencyIdentifier))
+                expect(childDependencyIdentifier).toNot(equal(newChildDependencyIdentifier))
+                expect(grandChildDependencyIdentifier).toNot(equal(newGrandChildDependencyIdentifier))
+            }
+            it("should not create new dependency") {
+                let injected = WrappedInject()
+                let dependencyIdentifier = injected.dependency.creationCount
+                let childDependencyIdentifier = injected.childDependency.creationCount
+                let grandChildDependencyIdentifier = injected.grandChildDependency.creationCount
+                let newInjected = WrappedInject()
+                let newDependencyIdentifier = newInjected.dependency.creationCount
+                let newChildDependencyIdentifier = newInjected.childDependency.creationCount
+                let newGrandChildDependencyIdentifier = newInjected.grandChildDependency.creationCount
+                expect(dependencyIdentifier).to(equal(newDependencyIdentifier))
+                expect(childDependencyIdentifier).to(equal(newChildDependencyIdentifier))
+                expect(grandChildDependencyIdentifier).to(equal(newGrandChildDependencyIdentifier))
+            }
+            it("should not error with circular dependency") {
+                let myA: MyCircularA = inject()
+                let myB: MyCircularB = inject()
                 expect(myA === myB.myCircularA).to(beTrue())
                 expect(myB === myA.myCircularB).to(beTrue())
             }
