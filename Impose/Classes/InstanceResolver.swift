@@ -78,3 +78,25 @@ class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
         FactoryInstanceProvider(resolver: resolver)
     }
 }
+
+class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance> {
+    var resolver: () -> Instance
+    weak var instance: Instance?
+    
+    init(resolver: @escaping () -> Instance) {
+        self.resolver = resolver
+    }
+    
+    override func resolveInstance() -> Any {
+        guard let instance = instance else {
+            let newInstance = resolver()
+            self.instance = newInstance
+            return newInstance
+        }
+        return instance
+    }
+    
+    override func cloneWithNoInstance() -> InstanceResolver {
+        WeakSingleInstanceProvider(resolver: resolver)
+    }
+}
