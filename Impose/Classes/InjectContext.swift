@@ -84,7 +84,13 @@ public class InjectResolver: InjectContext {
             result.append(value)
             return result
         }.sorted { resolver1, resolver2 in
-            resolver2.canBeResolved(by: resolver1)
+            if resolver1.isExactResolver(of: T.self) {
+                return true
+            } else if resolver2.isExactResolver(of: T.self) {
+                return false
+            } else {
+                return resolver2.canBeResolved(by: resolver1)
+            }
         }
     }
     

@@ -10,6 +10,7 @@ import Foundation
 // MARK: InstanceResolver protocol
 
 protocol InstanceResolver: AnyObject {
+    func isExactResolver<T>(of anyType: T.Type) -> Bool
     func isResolver<T>(of anyType: T.Type) -> Bool
     func canBeResolved(by otherResolver: InstanceResolver) -> Bool
     func resolveInstance() -> Any
@@ -24,8 +25,12 @@ class InstanceProvider<Instance>: InstanceResolver {
         otherResolver.isResolver(of: Instance.self)
     }
     
+    func isExactResolver<T>(of anyType: T.Type) -> Bool {
+        anyType == Instance.self
+    }
+    
     func isResolver<T>(of anyType: T.Type) -> Bool {
-        anyType == Instance.self || isType(Instance.self, implement: T.self) || isType(Instance.self, subclassOf: T.self)
+        isExactResolver(of: anyType) || isType(Instance.self, implement: T.self) || isType(Instance.self, subclassOf: T.self)
     }
     
     func resolveInstance() -> Any {
