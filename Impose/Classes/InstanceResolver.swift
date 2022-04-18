@@ -12,7 +12,6 @@ import Foundation
 protocol InstanceResolver: AnyObject {
     func isResolver<T>(of anyType: T.Type) -> Bool
     func canBeResolved(by otherResolver: InstanceResolver) -> Bool
-    func isPotentialResolver(of anyType: Any.Type) -> Bool
     func resolveInstance() -> Any
     func cloneWithNoInstance() -> InstanceResolver
 }
@@ -26,11 +25,7 @@ class InstanceProvider<Instance>: InstanceResolver {
     }
     
     func isResolver<T>(of anyType: T.Type) -> Bool {
-        Instance.self is T.Type
-    }
-    
-    func isPotentialResolver(of anyType: Any.Type) -> Bool {
-        anyType is Instance.Type
+        anyType == Instance.self || isType(Instance.self, implement: T.self)
     }
     
     func resolveInstance() -> Any {
@@ -46,10 +41,26 @@ class InstanceProvider<Instance>: InstanceResolver {
 
 class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
     var resolver: () -> Instance
-    lazy var instance: Instance = resolver()
+    var resolved: Bool = false
+    private lazy var _instance: Instance = resolver()
+    var instance: Instance {
+        get {
+            defer { resolved = true }
+            return _instance
+        }
+    }
     
     init(resolver: @escaping () -> Instance) {
         self.resolver = resolver
+    }
+    
+    override func isResolver<T>(of anyType: T.Type) -> Bool {
+        if super.isResolver(of: anyType) {
+            return true
+        } else if resolved {
+            return instance is T
+        }
+        return false
     }
     
     override func resolveInstance() -> Any {
@@ -87,6 +98,15 @@ class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance
         self.resolver = resolver
     }
     
+    override func isResolver<T>(of anyType: T.Type) -> Bool {
+        if super.isResolver(of: anyType) {
+            return true
+        } else if let instance = instance {
+            return instance is T
+        }
+        return false
+    }
+    
     override func resolveInstance() -> Any {
         guard let instance = instance else {
             let newInstance = resolver()
@@ -99,4 +119,12 @@ class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance
     override func cloneWithNoInstance() -> InstanceResolver {
         WeakSingleInstanceProvider(resolver: resolver)
     }
+}
+
+func isType<C: AnyObject>(_ type: Any.Type, subclassOf superType: C.Type) -> Bool {
+    type is C.Type
+}
+
+func isType<P>(_ type: Any.Type, implement anyObjectProtocol: P.Type) -> Bool {
+    type is P
 }

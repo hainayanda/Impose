@@ -70,7 +70,7 @@ public class InjectResolver: InjectContext {
     
     func findPotentialProviders<T>(for type: T.Type) -> [InstanceResolver] {
         resolvers.reduce([InstanceResolver]()) { partialResult, value in
-            guard value.isPotentialResolver(of: type) else {
+            guard value.isResolver(of: type) else {
                 return partialResult
             }
             var result = partialResult
