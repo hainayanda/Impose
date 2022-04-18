@@ -54,6 +54,14 @@ public class Injector: InjectResolver {
         return context
     }
     
+    @discardableResult
+    public func removeResolver<T>(of type: T.Type) -> Bool {
+        defer {
+            cleanCachedAndRepopulate()
+        }
+        return mappedResolvers.removeValue(forKey: .init(metaType: type)) != nil
+    }
+    
     // MARK: Transient
     
     /// provide transient resolver for the given type

@@ -28,6 +28,13 @@ public class InjectResolver: InjectContext {
         self.resolvers = []
     }
     
+    /// Remove all provider
+    public func reset() {
+        self.mappedResolvers = [:]
+        self.cachedMappedResolvers = [:]
+        self.resolvers = []
+    }
+    
     // MARK: Resolve
     
     /// Resolve instance from the given type. It will throws error if occured.
