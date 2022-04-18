@@ -142,8 +142,8 @@ public class Injector: InjectResolver {
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
     public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolver: @escaping () -> T) {
-        scopedResolver.mappedResolvers[anyType] = WeakSingleInstanceProvider(resolver: resolver)
-        scopedResolver.cleanCachedAndRepopulate()
+        mappedResolvers[anyType] = WeakSingleInstanceProvider(resolver: resolver)
+        cleanCachedAndRepopulate()
     }
     
     /// provide scoped resolver for the given type
@@ -155,9 +155,9 @@ public class Injector: InjectResolver {
     public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
         let resolver = WeakSingleInstanceProvider(resolver: resolver)
         for type in anyTypes {
-            scopedResolver.mappedResolvers[type] = resolver
+            mappedResolvers[type] = resolver
         }
-        scopedResolver.cleanCachedAndRepopulate()
+        cleanCachedAndRepopulate()
     }
     
     // MARK: Resolve
