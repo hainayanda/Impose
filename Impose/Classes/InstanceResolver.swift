@@ -25,7 +25,7 @@ class InstanceProvider<Instance>: InstanceResolver {
     }
     
     func isResolver<T>(of anyType: T.Type) -> Bool {
-        anyType == Instance.self || isType(Instance.self, implement: T.self)
+        anyType == Instance.self || isType(Instance.self, implement: T.self) || isType(Instance.self, subclassOf: T.self)
     }
     
     func resolveInstance() -> Any {
@@ -121,7 +121,7 @@ class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance
     }
 }
 
-func isType<C: AnyObject>(_ type: Any.Type, subclassOf superType: C.Type) -> Bool {
+func isType<C>(_ type: Any.Type, subclassOf superType: C.Type) -> Bool {
     type is C.Type
 }
 
