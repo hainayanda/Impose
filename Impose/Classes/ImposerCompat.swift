@@ -21,9 +21,9 @@ public extension Imposer {
     func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ provider: @escaping @autoclosure () -> T) {
         switch option {
         case .singleInstance:
-            addSingleton(for: anyType, provider)
+            addSingleton(for: anyType, resolver: provider)
         case .closureBased:
-            addTransient(for: anyType, provider)
+            addTransient(for: anyType, resolver: provider)
         }
     }
     
@@ -31,9 +31,9 @@ public extension Imposer {
     func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ closureProvider: @escaping () -> T) {
         switch option {
         case .singleInstance:
-            addSingleton(for: anyType, closureProvider)
+            addSingleton(for: anyType, resolver: closureProvider)
         case .closureBased:
-            addTransient(for: anyType, closureProvider)
+            addTransient(for: anyType, resolver: closureProvider)
         }
     }
     
@@ -41,9 +41,9 @@ public extension Imposer {
     static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ provider: @escaping @autoclosure () -> T) {
         switch option {
         case .singleInstance:
-            shared.addSingleton(for: anyType, provider)
+            shared.addSingleton(for: anyType, resolver: provider)
         case .closureBased:
-            shared.addTransient(for: anyType, provider)
+            shared.addTransient(for: anyType, resolver: provider)
         }
     }
     
@@ -51,9 +51,9 @@ public extension Imposer {
     static func impose<T>(for anyType: T.Type, option: InjectOption = .singleInstance, _ closureProvider: @escaping () -> T) {
         switch option {
         case .singleInstance:
-            shared.addSingleton(for: anyType, closureProvider)
+            shared.addSingleton(for: anyType, resolver: closureProvider)
         case .closureBased:
-            shared.addTransient(for: anyType, closureProvider)
+            shared.addTransient(for: anyType, resolver: closureProvider)
         }
     }
 }
