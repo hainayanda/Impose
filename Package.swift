@@ -17,8 +17,9 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "10.0.0")
+        // uncomment this code to test
+//        .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
+//        .package(url: "https://github.com/Quick/Nimble.git", from: "10.0.0")
     ],
     targets: [
         .target(
@@ -26,13 +27,14 @@ let package = Package(
             dependencies: [],
             path: "Impose/Classes"
         ),
-        .testTarget(
-            name: "ImposeTests",
-            dependencies: [
-                "Impose", "Quick", "Nimble"
-            ],
-            path: "Example/Tests",
-            exclude: ["Info.plist"]
-        )
+        // uncomment this code to test
+//        .testTarget(
+//            name: "ImposeTests",
+//            dependencies: [
+//                "Impose", "Quick", "Nimble"
+//            ],
+//            path: "Example/Tests",
+//            exclude: ["Info.plist"]
+//        )
     ]
 )
