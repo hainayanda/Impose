@@ -340,6 +340,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 It will call `provide(using:)` with the given `Injector`. You can add as many `ModuleProvider` as you need, but if the Module provides the same Dependency for the same type of resolver, it will override the previous one with the new one.
 
+## AutoInjectMock
+
+If you want to do a unit test and need some dependencies to be mocked, you can skip the injection in the test preparation and implement `AutoInjectMock` on your mock object like this:
+
+```swift
+class MyServiceMock: MyServiceProtocol, AutoInjectMock { 
+    static var registeredTypes: [Any.Type] = [MyServiceProtocol.self]
+    ..
+    ..
+}
+```
+
+Then in your unit test, you can use it like this:
+
+```swift
+serviceMock = MyServiceMock().injected()
+
+// or
+
+serviceMock = MyServiceMock().injected(using: customInjector)
+```
+
+Don't forget, you should use class instance for this to work because the injected instance will be different if you are using struct because if its nature.
+
 ## Contribute
 
 You know how, just clone and do pull request
