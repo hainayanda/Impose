@@ -13,7 +13,6 @@ public protocol AutoInjectMock {
 }
 
 public extension AutoInjectMock {
-    
     static var injector: Injector { .shared }
     
     func inject(using injector: Injector) {

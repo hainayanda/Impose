@@ -15,6 +15,5 @@ protocol MyAutoMockProtocol {
 
 class MyAutoMock: MyAutoMockProtocol, AutoInjectMock {
     static var registeredTypes: [Any.Type] = [MyAutoMockProtocol.self]
-    
     let id: UUID = UUID()
 }
