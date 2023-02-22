@@ -13,6 +13,13 @@ import Nimble
 
 class InjectTests: QuickSpec {
     override func spec() {
+        describe("AutoInjectMock test") {
+            it("should do auto injection") {
+                let mock: MyAutoMockProtocol = MyAutoMock().injected()
+                let injectedMock = inject(MyAutoMockProtocol.self)
+                expect(mock.id).to(equal(injectedMock.id))
+            }
+        }
         describe("singleton test") {
             beforeEach {
                 Injector.switchInjector(to: Injector())
