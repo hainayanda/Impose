@@ -99,7 +99,7 @@ the provider is autoClosure type, so you can do something like this:
 
 ```swift
 Injector.shared.addSingleton(for: Dependency.self) {
-    dependency: SomeDependency = .init()
+    let dependency: SomeDependency = .init()
     dependency.doSomeSetup()
     return dependency
 }
