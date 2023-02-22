@@ -2,9 +2,9 @@ excluded:
   - Example/Pods
 
 included:
-  - Draftsman
+  - Impose
   - Example/Tests
-  - Example/Draftsman
+  - Example/Impose
 
 disabled_rules:
  - trailing_whitespace
