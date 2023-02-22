@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2E0B6386955AA06DA5DBAFDF /* Pods_Impose_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */; };
+		3A8ECF2329A5C2F0007CBC0C /* AutoMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8ECF2229A5C2F0007CBC0C /* AutoMock.swift */; };
 		BB27BABC27F2AAC600EE0A01 /* CircularDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB27BABB27F2AAC600EE0A01 /* CircularDependency.swift */; };
 		BB4A8A3827EB4BB400465EA3 /* InjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4A8A3727EB4BB400465EA3 /* InjectTests.swift */; };
 		BB575AD4258F4062007EA8B9 /* StubSafeDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB575AD3258F4062007EA8B9 /* StubSafeDependency.swift */; };
@@ -18,6 +19,7 @@
 /* Begin PBXFileReference section */
 		17BF0E49F6471A8D75AEEA1A /* Impose.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Impose.podspec; path = ../Impose.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		28A16A0175AF18336B7C3887 /* Pods_Impose_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Impose_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A8ECF2229A5C2F0007CBC0C /* AutoMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoMock.swift; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* Impose_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Impose_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A2C7E7038EA72F35DA7F07F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				BB575AD3258F4062007EA8B9 /* StubSafeDependency.swift */,
 				BB575AD6258F407F007EA8B9 /* Dependency.swift */,
 				BB27BABB27F2AAC600EE0A01 /* CircularDependency.swift */,
+				3A8ECF2229A5C2F0007CBC0C /* AutoMock.swift */,
 			);
 			name = Mock;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 			files = (
 				BB27BABC27F2AAC600EE0A01 /* CircularDependency.swift in Sources */,
 				BBBE2962258EF96200C8DE2D /* StubDependency.swift in Sources */,
+				3A8ECF2329A5C2F0007CBC0C /* AutoMock.swift in Sources */,
 				BB575AD7258F407F007EA8B9 /* Dependency.swift in Sources */,
 				BB575AD4258F4062007EA8B9 /* StubSafeDependency.swift in Sources */,
 				BB4A8A3827EB4BB400465EA3 /* InjectTests.swift in Sources */,

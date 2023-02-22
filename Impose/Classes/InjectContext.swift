@@ -38,7 +38,7 @@ public class InjectResolver: InjectContext {
     // MARK: Resolve
     
     /// Resolve instance from the given type. It will throws error if occured.
-    /// Time complexity will be O(log n) and O(n) for worst case scenario.
+    /// Time complexity will be O(1) and O(n) for worst case scenario.
     /// At the worst scenario, it will then cached the type and provider so at the next method call with the same type it will O(log n)
     /// - Parameter type: type
     /// - Throws: ImposeError
