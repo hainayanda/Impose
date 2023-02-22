@@ -31,7 +31,7 @@ Impose is a simple dependency injection library for Swift
 Impose is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'Impose', '~> 3.1.3'
+pod 'Impose', '~> 3.1.4'
 ```
 
 ### Swift Package Manager from XCode
