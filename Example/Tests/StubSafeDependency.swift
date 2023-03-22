@@ -42,8 +42,8 @@ public class InitSafeInject: ScopableInitiable {
     }
     
     public required init(using context: InjectContext) {
-        dependency = injectIfProvided(scopedBy: context)
-        childDependency = injectIfProvided(scopedBy: context)
-        grandChildDependency = injectIfProvided(scopedBy: context)
+        dependency = injectIfProvided(providedBy: context)
+        childDependency = injectIfProvided(providedBy: context)
+        grandChildDependency = injectIfProvided(providedBy: context)
     }
 }

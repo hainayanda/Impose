@@ -56,8 +56,8 @@ public class InitInject: ScopableInitiable {
     }
     
     public required init(using context: InjectContext) {
-        dependency = inject(scopedBy: context)
-        childDependency = inject(scopedBy: context)
-        grandChildDependency = inject(scopedBy: context)
+        dependency = inject(providedBy: context)
+        childDependency = inject(providedBy: context)
+        grandChildDependency = inject(providedBy: context)
     }
 }

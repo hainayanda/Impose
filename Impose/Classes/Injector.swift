@@ -34,9 +34,15 @@ public class Injector: InjectResolver {
     static var customInjector: Injector?
     
     // MARK: Internal Properties
+    @available(*, deprecated, message: "Use Environmental instead")
     lazy var scopedResolver: InjectResolver = InjectResolver()
     
     // MARK: Public Properties
+    
+    
+    override init(parentProvider: InjectResolver) {
+        super.init(parentProvider: parentProvider)
+    }
     
     /// Default init
     public override init() {
@@ -45,6 +51,7 @@ public class Injector: InjectResolver {
     
     // MARK: Scoped
     
+    @available(*, deprecated, message: "Use Environmental instead")
     public func newScopedContext() -> InjectContext {
         let context = InjectResolver()
         let mappedResolvers = scopedResolver.mappedResolvers.withNoInstances()
@@ -64,56 +71,65 @@ public class Injector: InjectResolver {
     
     // MARK: Transient
     
+    @discardableResult
     /// provide transient resolver for the given type
     /// it will always create a new instance everytime resolver is asked for instance
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addTransient<T>(for anyType: Any.Type, resolver: @escaping () -> T) {
+    public func addTransient<T>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
         mappedResolvers[anyType] = FactoryInstanceProvider(resolver: resolver)
         cleanCachedAndRepopulate()
+        return self
     }
     
+    @discardableResult
     /// provide transient resolver for the given type
     /// it will always create a new instance everytime resolver is asked for instance
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addTransient<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
+    public func addTransient<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
         let resolver = FactoryInstanceProvider(resolver: resolver)
         for type in anyTypes {
             mappedResolvers[type] = resolver
         }
         cleanCachedAndRepopulate()
+        return self
     }
     
     // MARK: Singleton
     
+    @discardableResult
     /// provide singleton resolver for the given type
     /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addSingleton<T>(for anyType: Any.Type, resolver: @escaping () -> T) {
+    public func addSingleton<T>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
         mappedResolvers[anyType] = SingleInstanceProvider(resolver: resolver)
         cleanCachedAndRepopulate()
+        return self
     }
     
+    @discardableResult
     /// provide singleton resolver for the given type
     /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addSingleton<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
+    public func addSingleton<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
         let resolver = SingleInstanceProvider(resolver: resolver)
         for type in anyTypes {
             mappedResolvers[type] = resolver
         }
         cleanCachedAndRepopulate()
+        return self
     }
     
     // MARK: Scoped
     
+    @available(*, deprecated, message: "Use Environmental instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -126,6 +142,7 @@ public class Injector: InjectResolver {
         scopedResolver.cleanCachedAndRepopulate()
     }
     
+    @available(*, deprecated, message: "Use Environmental instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -143,29 +160,33 @@ public class Injector: InjectResolver {
     
     // MARK: Weak
     
+    @discardableResult
     /// provide scoped resolver for the given type
     /// it basically a singleton but stored in weak variable
     /// it will recreate a new instance once weak varibale is nil
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolver: @escaping () -> T) {
+    public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
         mappedResolvers[anyType] = WeakSingleInstanceProvider(resolver: resolver)
         cleanCachedAndRepopulate()
+        return self
     }
     
+    @discardableResult
     /// provide scoped resolver for the given type
     /// it basically a singleton but stored in weak variable
     /// it will recreate a new instance once weak varibale is nil
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
+    public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
         let resolver = WeakSingleInstanceProvider(resolver: resolver)
         for type in anyTypes {
             mappedResolvers[type] = resolver
         }
         cleanCachedAndRepopulate()
+        return self
     }
     
     // MARK: Resolve
@@ -180,6 +201,7 @@ public class Injector: InjectResolver {
         do {
             return try super.resolve(type)
         } catch {
+            // TODO: Remove this on next release
             return try scopedResolver.resolve(type)
         }
     }
@@ -199,46 +221,51 @@ public extension Injector {
     
     // MARK: Transient
     
+    @discardableResult
     /// provide transient resolver for the given type
     /// it will always create a new instance everytime resolver is asked for instance
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    func addTransient<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) {
+    func addTransient<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
         addTransient(for: anyType, resolver: resolver)
     }
     
+    @discardableResult
     /// provide singleton resolver for the given type
     /// it will just create an instance once and reused it if asked again
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    func addTransient<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) {
+    func addTransient<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
         addTransient(for: anyTypes, resolver: resolver)
     }
     
     // MARK: Singleton
     
+    @discardableResult
     /// provide singleton resolver for the given type
     /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    func addSingleton<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) {
+    func addSingleton<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
         addSingleton(for: anyType, resolver: resolver)
     }
     
+    @discardableResult
     /// provide singleton resolver for the given type
     /// it will just create an instance once and reused it if asked to resolve again
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
-    func addSingleton<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) {
+    func addSingleton<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
         addSingleton(for: anyTypes, resolver: resolver)
     }
     
     // MARK: Scoped
     
+    @available(*, deprecated, message: "Use Environmental instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -250,6 +277,7 @@ public extension Injector {
         addScoped(for: anyType, resolver: resolver)
     }
     
+    @available(*, deprecated, message: "Use Environmental instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -263,23 +291,25 @@ public extension Injector {
     
     // MARK: Weak
     
+    @discardableResult
     /// provide scoped resolver for the given type
     /// it basically a singleton but stored in weak variable
     /// it will recreate a new instance once weak varibale is nil
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) {
+    func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
         addWeakSingleton(for: anyType, resolver: resolver)
     }
     
+    @discardableResult
     /// provide scoped resolver for the given type
     /// it basically a singleton but stored in weak variable
     /// it will recreate a new instance once weak varibale is nil
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) {
+    func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
         addWeakSingleton(for: anyTypes, resolver: resolver)
     }
 }

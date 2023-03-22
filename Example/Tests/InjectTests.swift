@@ -227,8 +227,8 @@ class InjectTests: QuickSpec {
             }
             it("should not error with circular dependency") {
                 let context = Injector.shared.newScopedContext()
-                let myA: MyCircularA = inject(scopedBy: context)
-                let myB: MyCircularB = inject(scopedBy: context)
+                let myA: MyCircularA = inject(providedBy: context)
+                let myB: MyCircularB = inject(providedBy: context)
                 expect(myA === myB.myCircularA).to(beTrue())
                 expect(myB === myA.myCircularB).to(beTrue())
             }

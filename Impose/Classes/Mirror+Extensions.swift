@@ -8,11 +8,11 @@
 import Foundation
 
 extension Mirror {
-    func setInjectedToBeScoped(by context: InjectContext) {
+    func setEnvironment(_ context: InjectContext) {
         children.forEach {
-            guard let property = $0.value as? ScopeInjectable else { return }
-            property.applyScope(by: context)
+            guard let property = $0.value as? EnvironmentInjectable else { return }
+            property.provided(by: context)
         }
-        self.superclassMirror?.setInjectedToBeScoped(by: context)
+        self.superclassMirror?.setEnvironment(context)
     }
 }

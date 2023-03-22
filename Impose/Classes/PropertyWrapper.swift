@@ -7,19 +7,19 @@
 
 import Foundation
 
-protocol ScopeInjectable: AnyObject {
-    func applyScope(by context: InjectContext)
+protocol EnvironmentInjectable: AnyObject {
+    func provided(by context: InjectContext)
 }
 
 @propertyWrapper
 /// The wrapper of inject(for:) method
-public class Injected<T>: ScopeInjectable, ScopedInitiable {
+public class Injected<T>: EnvironmentInjectable {
     private var assignedManually: Bool = false
-    private lazy var _wrappedValue: T? = inject(T.self, scopedBy: scopeContext)
+    private lazy var _wrappedValue: T? = inject(T.self, providedBy: scopeContext)
     public var wrappedValue: T {
         get {
             guard let wrappedValue = _wrappedValue else {
-                let value = inject(T.self, scopedBy: scopeContext)
+                let value = inject(T.self, providedBy: scopeContext)
                 _wrappedValue = value
                 return value
             }
@@ -42,27 +42,23 @@ public class Injected<T>: ScopeInjectable, ScopedInitiable {
     /// Default init
     public init() { }
     
-    public required init(using context: InjectContext) {
-        scopeContext = context
-    }
-    
-    func applyScope(by context: InjectContext) {
+    func provided(by context: InjectContext) {
         self.scopeContext = context
     }
 }
 
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
-public class SafelyInjected<T>: ScopeInjectable, ScopedInitiable {
+public class SafelyInjected<T>: EnvironmentInjectable {
     private var assignedManually: Bool = false
-    private lazy var _wrappedValue: T? = injectIfProvided(for: T.self, scopedBy: scopeContext)
+    private lazy var _wrappedValue: T? = injectIfProvided(for: T.self, providedBy: context)
     public var wrappedValue: T? {
         get {
             guard !assignedManually else {
                 return _wrappedValue
             }
             guard let wrappedValue = _wrappedValue else {
-                _wrappedValue = injectIfProvided(for: T.self, scopedBy: scopeContext)
+                _wrappedValue = injectIfProvided(for: T.self, providedBy: context)
                 return _wrappedValue
             }
             return wrappedValue
@@ -72,7 +68,7 @@ public class SafelyInjected<T>: ScopeInjectable, ScopedInitiable {
         }
     }
     
-    var scopeContext: InjectContext? {
+    var context: InjectContext? {
         didSet {
             guard !assignedManually else {
                 return
@@ -84,18 +80,15 @@ public class SafelyInjected<T>: ScopeInjectable, ScopedInitiable {
     /// Default init
     public init() { }
     
-    public required init(using context: InjectContext) {
-        scopeContext = context
-    }
-    
-    func applyScope(by context: InjectContext) {
-        self.scopeContext = context
+    func provided(by context: InjectContext) {
+        self.context = context
     }
 }
 
+@available(*, deprecated, message: "Use Environmental instead")
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
-public class Scoped<T: Scopable>: ScopeInjectable {
+public class Scoped<T: Scopable>: EnvironmentInjectable {
     public var wrappedValue: T {
         didSet {
             injectWrappedIfNeeded()
@@ -131,7 +124,7 @@ public class Scoped<T: Scopable>: ScopeInjectable {
         wrappedValue.scoped(by: scopeContext)
     }
     
-    func applyScope(by context: InjectContext) {
+    func provided(by context: InjectContext) {
         self.scopeContext = context
     }
 }
