@@ -184,73 +184,35 @@ This provider is a combination of singleton and transient providers. It will sto
 Injector.shared.addWeakSingleton(for: Dependency.self, SomeDependency())
 ```
 
-## Scoped Provider
+## Environment
 
-You can scope your dependency so it will create a new singleton instance within a scope:
+You can defined specific environment for specific object that will live with those object and became the primary source of dependencies by using Environment object:
 
 ```swift
-Injector.shared.addScoped(for: Dependency.self, SomeDependency())
+Environment.forObject(myObject)
+    .inject(for: Dependency.self, SomeDependency())
+    .inject(for: AnotherDependency.self, SomeOtherDependency())
 ```
 
-To scope an object, you need to implement the Scopable protocol, as a mark that this object could have a different scope than global dependencies. Without a scope, this will behave like a singleton dependency:
+In the code above, myObject Injected propertyWrapper will use the Environment as primary source of the dependency. It will search to Injector.shared tho if the dependency is not provided by the Environment.
+
+You can transfer the dependency providers from another object Environment to the another, so it will use similar Environment:
 
 ```swift
-class MyObject: Scopable {
-    @Injected var dependency: Dependency
+Environment.fromObject(myObject, for: someObject)
+    .inject(for: SomeOtherDependency.self, SomeDependency())
+```
+
+In the code above, someObject will have a new Environment that contains all of the myObject dependency providers, plus the one added later. It will populate the dependency from myObject Injected propertyWrapper too if its assigned manually.
+
+```swift
+class MyObject { 
+    @Injected manual: ManualDependency
     
-    ...
-    ...
-}
-```
-
-Scopable is declared like this:
-
-```swift
-public protocol Scopable {
-    var scopeContext: InjectContext { get }
-    func scoped(by context: InjectContext)
-    func scopedUsingSameContext(as scope: Scopable)
-}
-```
-
-you can create your context like this:
-
-```swift
-let myContext = Injector.shared.newScopedContext()
-```
-
-then use it for any object you need so it will then inject scoped dependency using that context instead of the global one:
-
-```swift
-myObject.scoped(by: myContext)
-myOtherObject.scoped(by: myContext)
-myAnyOtherObject.scopedUsingSameContext(as: myObject)
-```
-
-All of those three objects will have the same instance of the same scoped dependency. Any other object with no scope or different scope will have a different instance.
-
-You can use `ScopableInitiable` instead if you want to have the capabilities to have to init with scope:
-
-```swift
-class MyObject: ScopableInitiable {
-    @Injected var dependency: Dependency
-    
-    required init(using context: InjectContext) {
-        scoped(by: context)
+    init() { 
+        // this dependency will be transfered to another Environment created from this object
+        manualDependency = MyManualDependency()
     }
-    ...
-    ...
-}
-```
-
-There is one property wrapped named Scoped that can be used to make sure that property will be scoped using the same context when `scoped(by:)` is called or when the property is assigned:
-
-```swift
-class MyObject: Scopable {
-    @Injected var dependency: Dependency
-    @Scoped var myScopable: ScopableObject = .init()
-    ...
-    ...
 }
 ```
 
@@ -272,10 +234,10 @@ or for transient:
 Injector.shared.addTransient(for: [Dependency.self, OtherDependency.self], SomeDependency())
 ```
 
-or even for scoped:
+or even for environment:
 
 ```swift
-Injector.shared.addScoped(for: [Dependency.self, OtherDependency.self], SomeDependency())
+Environment.forObject(myObject).inject(for: [Dependency.self, OtherDependency.self], SomeDependency())
 ```
 
 ## Multiple Injectors
@@ -362,7 +324,7 @@ serviceMock = MyServiceMock().injected()
 serviceMock = MyServiceMock().injected(using: customInjector)
 ```
 
-Don't forget, you should use class instance for this to work because the injected instance will be different if you are using struct because if its nature.
+Don't forget, you should use class instance for this to work because the injected instance will be different if you are using struct because of its nature.
 
 ## Contribute
 
