@@ -14,7 +14,6 @@ protocol Dependency: AnyObject {
     func explainMyself() -> String
 }
 
-
 class ChildDependency: Dependency {
     
     static var objectCreationCounter: Int = 0

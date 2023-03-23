@@ -9,11 +9,11 @@
 import Foundation
 import Impose
 
-protocol MyCircularA: Scopable, AnyObject {
+protocol MyCircularA: AnyObject {
     var myCircularB: MyCircularB { get set }
 }
 
-protocol MyCircularB: Scopable, AnyObject {
+protocol MyCircularB: AnyObject {
     var myCircularA: MyCircularA { get set }
 }
 
