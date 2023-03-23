@@ -31,7 +31,7 @@ public func tryInject<T>(_ type: T.Type = T.self, providedBy resolver: InjectCon
     return try Injector.shared.resolve(type)
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. It will throw ImposeError if fail
 /// - Parameters:
 ///   - type: type of instance
@@ -63,7 +63,7 @@ public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContex
     }
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. It will use given closure if fail
 /// - Parameters:
 ///   - type: type of instance
@@ -84,7 +84,7 @@ public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContex
     inject(type, providedBy: resolver, ifFail: resolve)
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. It will use given autoclosure if fail
 /// - Parameters:
 ///   - type: type of instance
@@ -104,7 +104,7 @@ public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContex
     try! tryInject(type, providedBy: resolver)
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. It will throws fatal error if fail
 /// - Parameters:
 ///   - type: type of instance
@@ -123,7 +123,7 @@ public func injectIfProvided<T>(for type: T.Type = T.self, providedBy resolver: 
     try? tryInject(type, providedBy: resolver)
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. it will return nil if fail
 /// - Parameters:
 ///   - type: type of instance

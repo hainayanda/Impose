@@ -34,7 +34,7 @@ public class Injector: InjectResolver {
     static var customInjector: Injector?
     
     // MARK: Internal Properties
-    @available(*, deprecated, message: "Use Environmental instead")
+    @available(*, deprecated, message: "Use Environment instead")
     lazy var scopedResolver: InjectResolver = InjectResolver()
     
     // MARK: Public Properties
@@ -51,7 +51,7 @@ public class Injector: InjectResolver {
     
     // MARK: Scoped
     
-    @available(*, deprecated, message: "Use Environmental instead")
+    @available(*, deprecated, message: "Use Environment instead")
     public func newScopedContext() -> InjectContext {
         let context = InjectResolver()
         let mappedResolvers = scopedResolver.mappedResolvers.withNoInstances()
@@ -129,7 +129,7 @@ public class Injector: InjectResolver {
     
     // MARK: Scoped
     
-    @available(*, deprecated, message: "Use Environmental instead")
+    @available(*, deprecated, message: "Use Environment instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -142,7 +142,7 @@ public class Injector: InjectResolver {
         scopedResolver.cleanCachedAndRepopulate()
     }
     
-    @available(*, deprecated, message: "Use Environmental instead")
+    @available(*, deprecated, message: "Use Environment instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -265,7 +265,7 @@ public extension Injector {
     
     // MARK: Scoped
     
-    @available(*, deprecated, message: "Use Environmental instead")
+    @available(*, deprecated, message: "Use Environment instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped
@@ -277,7 +277,7 @@ public extension Injector {
         addScoped(for: anyType, resolver: resolver)
     }
     
-    @available(*, deprecated, message: "Use Environmental instead")
+    @available(*, deprecated, message: "Use Environment instead")
     /// provide scoped resolver for the given type
     /// it basically a singleton but in scoped manner.
     /// it will reused the same instance in same scoped

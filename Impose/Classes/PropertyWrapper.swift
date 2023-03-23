@@ -85,7 +85,7 @@ public class SafelyInjected<T>: EnvironmentInjectable {
     }
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
 public class Scoped<T: Scopable>: EnvironmentInjectable {

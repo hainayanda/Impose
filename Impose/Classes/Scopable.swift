@@ -7,24 +7,24 @@
 
 import Foundation
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 public protocol Scopable {
     var scopeContext: InjectContext { get }
     func scoped(by context: InjectContext)
     func scopedUsingSameContext(as scope: Scopable)
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 public protocol ScopedInitiable {
     init(using context: InjectContext)
 }
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 public typealias ScopableInitiable = ScopedInitiable & Scopable
 
 fileprivate var scopeContextKey: String = "scopeContextKey"
 
-@available(*, deprecated, message: "Use Environmental instead")
+@available(*, deprecated, message: "Use Environment instead")
 public extension Scopable {
     
     internal var currentContext: InjectContext? {
@@ -47,7 +47,7 @@ public extension Scopable {
         if currentContext === context { return }
         objc_setAssociatedObject(self, &scopeContextKey, context, .OBJC_ASSOCIATION_RETAIN)
         let reflection = Mirror(reflecting: self)
-        reflection.setEnvironment(context)
+        reflection.setInjectContext(context)
     }
     
     func scopedUsingSameContext(as scope: Scopable) {
