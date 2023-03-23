@@ -33,7 +33,7 @@
 		32995147DC30DF5022DD66C0470BFDE9 /* QuickSpecBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 60403D3F19863854702A6361D7F61850 /* QuickSpecBase.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		35C095305E5FB8CF40BB6C6A7F02E678 /* ErrorUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD87F111AA17D3829427C832EB042273 /* ErrorUtility.swift */; };
 		3923CDBA58AF0065A7C314BA72962B60 /* ResolverFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BA6877C86464A9986DBE22E865CE1F /* ResolverFunction.swift */; };
-		3A1550B829CA9B8700395AFF /* Environmental.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1550B729CA9B8700395AFF /* Environmental.swift */; };
+		3A1550BC29CAB35400395AFF /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1550BB29CAB35400395AFF /* Environment.swift */; };
 		3A8ECF2129A5AD26007CBC0C /* AutoInjectMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8ECF2029A5AD26007CBC0C /* AutoInjectMock.swift */; };
 		3ABDA920FDD838A534E55347FF35ACCC /* BeNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5852911233E16D8DBA632AAF28C4C0 /* BeNil.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		3B59EB43186F324A79D05C3201369283 /* QuickSpecBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A6115706ED27012A9F43E253D3D3DD7 /* QuickSpecBase.m */; };
@@ -198,7 +198,7 @@
 		350B976ED907275DDED563482009AFD2 /* QuickTestObservation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = QuickTestObservation.swift; path = Sources/Quick/QuickTestObservation.swift; sourceTree = "<group>"; };
 		369990B25C94966B37B0E376A2FE93C0 /* NMBStringify.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NMBStringify.h; path = Sources/NimbleObjectiveC/NMBStringify.h; sourceTree = "<group>"; };
 		369AF311342A696C4250505269D5A393 /* Pods-Impose_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Impose_Tests-Info.plist"; sourceTree = "<group>"; };
-		3A1550B729CA9B8700395AFF /* Environmental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environmental.swift; sourceTree = "<group>"; };
+		3A1550BB29CAB35400395AFF /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Environment.swift; path = Impose/Classes/Environment.swift; sourceTree = "<group>"; };
 		3A8ECF2029A5AD26007CBC0C /* AutoInjectMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AutoInjectMock.swift; path = Impose/Classes/AutoInjectMock.swift; sourceTree = "<group>"; };
 		3AB7CD71B60EA2105E3B829018137EDD /* Impose-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Impose-prefix.pch"; sourceTree = "<group>"; };
 		3ACD6C4F6A73BDD5AD96201D4EB8F488 /* Pods-Impose_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Impose_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -484,7 +484,7 @@
 			children = (
 				3A8ECF2029A5AD26007CBC0C /* AutoInjectMock.swift */,
 				7B19067900DDB99668BE37B893C173C3 /* Dictionary+Extensions.swift */,
-				3A1550B729CA9B8700395AFF /* Environmental.swift */,
+				3A1550BB29CAB35400395AFF /* Environment.swift */,
 				DF968DDEC538E74088CB71438D6DDF5E /* ImposeError.swift */,
 				DCD9A4F3D564F4D7AEDAF94710AC8FC0 /* InjectContext.swift */,
 				55606814AD70034AF2244B2299875A62 /* Injector.swift */,
@@ -835,7 +835,7 @@
 				288478ADA82D893B93DB611328AD0CE3 /* Dictionary+Extensions.swift in Sources */,
 				F0007F098EA99BE307A2C907017ECFEA /* Impose-dummy.m in Sources */,
 				741D1D02CBFC1C77EC53BC83C7640A73 /* ImposeError.swift in Sources */,
-				3A1550B829CA9B8700395AFF /* Environmental.swift in Sources */,
+				3A1550BC29CAB35400395AFF /* Environment.swift in Sources */,
 				3A8ECF2129A5AD26007CBC0C /* AutoInjectMock.swift in Sources */,
 				E8FA62A6E1AAA86361EBBF0F889DE87D /* InjectContext.swift in Sources */,
 				A2878723A641DFD73FADC2DDEB3BF6F6 /* Injector.swift in Sources */,
