@@ -105,7 +105,7 @@ Injector.shared.addSingleton(for: Dependency.self) {
 }
 ```
 
-the provider automatically just creates one instance only from calling closure and reused the instance, so the closure is only called once. If you want the provider to call closure for every injection, you can use `addTransient` method:
+the provider automatically just creates one instance only from calling closure and reusing the instance, so the closure is only called once. If you want the provider to call closure for every injection, you can use `addTransient` method:
 
 ```swift
 Injector.shared.addTransient(for: Dependency.self, SomeDependency())
@@ -162,7 +162,7 @@ class InjectedByInit {
 
 ## Singleton Provider
 
-The simplest injection Provider is Singleton provider. The provider just creates one instance, stores it, and reused the instance, so the closure is only called once. The instance will not be released until the Injector is released. It will be useful for shared instance dependencies:
+The simplest injection Provider is the Singleton provider. The provider just creates one instance, stores it, and reused the instance, so the closure is only called once. The instance will not be released until the Injector is released. It will be useful for shared instance dependencies:
 
 ```swift
 Injector.shared.addSingleton(for: Dependency.self, SomeDependency())
@@ -178,7 +178,7 @@ Injector.shared.addTransient(for: Dependency.self, SomeDependency())
 
 ## Weak Provider
 
-This provider is a combination of singleton and transient providers. It will store the instance in a weak variable before returning it. Once the stored instance became nil, it will recreate a new instance for the next injection. The closure will be stored strongly tho. It will be useful for dependency that you want to use and shared but released when not used anymore:
+This provider is a combination of singleton and transient providers. It will store the instance in a weak variable before returning it. Once the stored instance became nil, it will recreate a new instance for the next injection. The closure will be stored strongly tho. It will be useful for dependency that you want to use and share but released when not used anymore:
 
 ```swift
 Injector.shared.addWeakSingleton(for: Dependency.self, SomeDependency())
@@ -186,7 +186,7 @@ Injector.shared.addWeakSingleton(for: Dependency.self, SomeDependency())
 
 ## Environment
 
-You can defined specific environment for specific object that will live with those object and became the primary source of dependencies by using Environment object:
+You can define a specific environment for a specific object that will live with that object and become the primary source of dependencies by using the Environment object:
 
 ```swift
 Environment.forObject(myObject)
@@ -194,16 +194,16 @@ Environment.forObject(myObject)
     .inject(for: AnotherDependency.self, SomeOtherDependency())
 ```
 
-In the code above, myObject Injected propertyWrapper will use the Environment as primary source of the dependency. It will search to Injector.shared tho if the dependency is not provided by the Environment.
+In the code above, the `myObject` `Injected` propertyWrapper will use the Environment as the primary source of the dependency. It will search in `Injector.shared` tho if the dependency is not provided by the Environment.
 
-You can transfer the dependency providers from another object Environment to the another, so it will use similar Environment:
+You can transfer the dependency providers from another object Environment to another, so it will use a similar Environment:
 
 ```swift
 Environment.fromObject(myObject, for: someObject)
-    .inject(for: SomeOtherDependency.self, SomeDependency())
+  .inject(for: SomeOtherDependency.self, SomeDependency())
 ```
 
-In the code above, someObject will have a new Environment that contains all of the myObject dependency providers, plus the one added later. It will populate the dependency from myObject Injected propertyWrapper too if its assigned manually.
+In the code above, someObject will have a new Environment that contains all of the myObject dependency providers, plus the one added later. It will populate the dependency from myObject Injected propertyWrapper too if it's assigned manually.
 
 ```swift
 class MyObject { 
@@ -218,7 +218,7 @@ class MyObject {
 
 ## Circular Dependency
 
-`Injected` and `SafelyInjected` propertyWrapper will resolve dependency lazily, thus it will work even if you have a circular dependency. But it will rise stack overflow error if you use inject function instead on init since it will resolve the dependency right away. Even tho circular dependency is not recommended, it will be better if you use propertyWrapper instead for injection to avoid this problem.
+`Injected` and `SafelyInjected` propertyWrapper will resolve dependency lazily, thus it will work even if you have a circular dependency. But it will rise a stack overflow error if you use inject function instead of init since it will resolve the dependency right away. Even tho circular dependency is not recommended, it will be better if you use propertyWrapper instead for injection to avoid this problem.
 
 ## Multiple Types for one Provider
 
@@ -234,7 +234,7 @@ or for transient:
 Injector.shared.addTransient(for: [Dependency.self, OtherDependency.self], SomeDependency())
 ```
 
-or even for environment:
+or even for the environment:
 
 ```swift
 Environment.forObject(myObject).inject(for: [Dependency.self, OtherDependency.self], SomeDependency())
@@ -324,7 +324,7 @@ serviceMock = MyServiceMock().injected()
 serviceMock = MyServiceMock().injected(using: customInjector)
 ```
 
-Don't forget, you should use class instance for this to work because the injected instance will be different if you are using struct because of its nature.
+Don't forget, you should use a class instance for this to work because the injected instance will be different if you are using struct because of its nature.
 
 ## Contribute
 
