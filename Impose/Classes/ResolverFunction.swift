@@ -24,7 +24,7 @@ public func tryInject<T>(_ type: T.Type = T.self, providedBy resolver: InjectCon
         // TODO: Remove this on next release
         if instance is Scopable {
             let reflection = Mirror(reflecting: instance)
-            reflection.setEnvironment(resolver)
+            reflection.setInjectContext(resolver)
         }
         return instance
     }
@@ -58,7 +58,7 @@ public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContex
             return instance
         }
         let reflection = Mirror(reflecting: instance)
-        reflection.setEnvironment(resolver)
+        reflection.setInjectContext(resolver)
         return instance
     }
 }

@@ -11,15 +11,19 @@ protocol EnvironmentInjectable: AnyObject {
     func provided(by context: InjectContext)
 }
 
+protocol ManualAssignedProviderExtractable {
+    func manualAssignedProvider() -> (Any.Type, InstanceResolver)?
+}
+
 @propertyWrapper
 /// The wrapper of inject(for:) method
-public class Injected<T>: EnvironmentInjectable {
+public class Injected<T>: EnvironmentInjectable, ManualAssignedProviderExtractable {
     private var assignedManually: Bool = false
-    private lazy var _wrappedValue: T? = inject(T.self, providedBy: scopeContext)
+    private var _wrappedValue: T?
     public var wrappedValue: T {
         get {
             guard let wrappedValue = _wrappedValue else {
-                let value = inject(T.self, providedBy: scopeContext)
+                let value = inject(T.self, providedBy: context)
                 _wrappedValue = value
                 return value
             }
@@ -30,7 +34,7 @@ public class Injected<T>: EnvironmentInjectable {
         }
     }
     
-    var scopeContext: InjectContext? {
+    var context: InjectContext? {
         didSet {
             guard !assignedManually else {
                 return
@@ -43,15 +47,20 @@ public class Injected<T>: EnvironmentInjectable {
     public init() { }
     
     func provided(by context: InjectContext) {
-        self.scopeContext = context
+        self.context = context
+    }
+    
+    func manualAssignedProvider() -> (Any.Type, InstanceResolver)? {
+        guard assignedManually, let instance = _wrappedValue else { return nil }
+        return (T.self, SingleInstanceProvider { instance })
     }
 }
 
 @propertyWrapper
 /// The wrapper of injectIfProvided(for:) method
-public class SafelyInjected<T>: EnvironmentInjectable {
+public class SafelyInjected<T>: EnvironmentInjectable, ManualAssignedProviderExtractable {
     private var assignedManually: Bool = false
-    private lazy var _wrappedValue: T? = injectIfProvided(for: T.self, providedBy: context)
+    private var _wrappedValue: T?
     public var wrappedValue: T? {
         get {
             guard !assignedManually else {
@@ -82,6 +91,11 @@ public class SafelyInjected<T>: EnvironmentInjectable {
     
     func provided(by context: InjectContext) {
         self.context = context
+    }
+    
+    func manualAssignedProvider() -> (Any.Type, InstanceResolver)? {
+        guard assignedManually, let instance = _wrappedValue else { return nil }
+        return (T.self, SingleInstanceProvider { instance })
     }
 }
 
