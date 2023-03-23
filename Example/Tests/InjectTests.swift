@@ -11,7 +11,9 @@ import Quick
 import Nimble
 @testable import Impose
 
+// swiftlint:disable type_body_length
 class InjectTests: QuickSpec {
+    // swiftlint:disable function_body_length
     override func spec() {
         describe("AutoInjectMock test") {
             it("should do auto injection") {
@@ -286,4 +288,6 @@ class InjectTests: QuickSpec {
             }
         }
     }
+    // swiftlint:enable function_body_length
 }
+// swiftlint:enable type_body_length

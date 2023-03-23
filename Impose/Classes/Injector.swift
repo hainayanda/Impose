@@ -196,7 +196,6 @@ public class Injector: InjectResolver {
         do {
             return try super.resolve(type)
         } catch {
-            // TODO: Remove this on next release
             return try scopedResolver.resolve(type)
         }
     }

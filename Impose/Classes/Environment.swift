@@ -89,7 +89,9 @@ private var environmentInjectorKey: String = "environmentInjectorKey"
 
 extension Environment {
     
-    /// Create new Environment for the given object with inital dependencies from the source Environment if it have one that used as primary source of Dependencies for Injected.
+    /// Create new Environment for the given object with inital dependencies
+    /// from the source Environment if it have one
+    /// that used as primary source of Dependencies for Injected propertyWrapper.
     /// - Parameters:
     ///   - source: source object
     ///   - object: any object

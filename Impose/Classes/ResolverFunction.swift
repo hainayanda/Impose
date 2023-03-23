@@ -21,7 +21,6 @@ public func tryInject<T>(_ type: T.Type = T.self, providedBy resolver: InjectCon
         } else {
             instance = try Injector.shared.resolve(type)
         }
-        // TODO: Remove this on next release
         if instance is Scopable {
             let reflection = Mirror(reflecting: instance)
             reflection.setInjectContext(resolver)
@@ -42,26 +41,28 @@ public func tryInject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable) t
     try tryInject(type, providedBy: scopable.scopeContext)
 }
 
-
 /// get instance of the given type. It will use given closure if fail
 /// - Parameters:
 ///   - type: type of instance
 ///   - resolve: closure resolver to call if inject fail
 ///   - injector: Injector that will resolve the instance
 /// - Returns:  instance resolved
-public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil, ifFail resolve: () -> T) -> T {
-    do {
-        return try tryInject(type, providedBy: resolver)
-    } catch {
-        let instance = resolve()
-        guard let resolver = resolver else {
+public func inject<T>(
+    _ type: T.Type = T.self,
+    providedBy resolver: InjectContext? = nil,
+    ifFail resolve: () -> T) -> T {
+        do {
+            return try tryInject(type, providedBy: resolver)
+        } catch {
+            let instance = resolve()
+            guard let resolver = resolver else {
+                return instance
+            }
+            let reflection = Mirror(reflecting: instance)
+            reflection.setInjectContext(resolver)
             return instance
         }
-        let reflection = Mirror(reflecting: instance)
-        reflection.setInjectContext(resolver)
-        return instance
     }
-}
 
 @available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. It will use given closure if fail
@@ -80,9 +81,12 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable, ifFa
 ///   - injector: Injector that will resolve the instance
 ///   - resolve: autoclosure resolver to call if inject fail
 /// - Returns:  instance resolved
-public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil, ifFailUse resolve: @autoclosure () -> T) -> T {
-    inject(type, providedBy: resolver, ifFail: resolve)
-}
+public func inject<T>(
+    _ type: T.Type = T.self,
+    providedBy resolver: InjectContext? = nil,
+    ifFailUse resolve: @autoclosure () -> T) -> T {
+        inject(type, providedBy: resolver, ifFail: resolve)
+    }
 
 @available(*, deprecated, message: "Use Environment instead")
 /// get instance of the given type. It will use given autoclosure if fail
@@ -101,6 +105,7 @@ public func inject<T>(_ type: T.Type = T.self, scopedBy scopable: Scopable, ifFa
 ///   - injector: Injector that will resolve the instance
 /// - Returns: instance resolved
 public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil) -> T {
+    // swiftlint:disable:next force_try
     try! tryInject(type, providedBy: resolver)
 }
 

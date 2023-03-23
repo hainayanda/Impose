@@ -22,7 +22,7 @@ public protocol ScopedInitiable {
 @available(*, deprecated, message: "Use Environment instead")
 public typealias ScopableInitiable = ScopedInitiable & Scopable
 
-fileprivate var scopeContextKey: String = "scopeContextKey"
+private var scopeContextKey: String = "scopeContextKey"
 
 @available(*, deprecated, message: "Use Environment instead")
 public extension Scopable {

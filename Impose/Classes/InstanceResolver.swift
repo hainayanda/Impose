@@ -44,10 +44,8 @@ class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
     var resolved: Bool = false
     private lazy var _instance: Instance = resolver()
     var instance: Instance {
-        get {
-            defer { resolved = true }
-            return _instance
-        }
+        defer { resolved = true }
+        return _instance
     }
     
     init(resolver: @escaping () -> Instance) {
