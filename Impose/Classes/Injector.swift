@@ -39,11 +39,6 @@ public class Injector: InjectResolver {
     
     // MARK: Public Properties
     
-    
-    override init(parentProvider: InjectResolver) {
-        super.init(parentProvider: parentProvider)
-    }
-    
     /// Default init
     public override init() {
         super.init()

@@ -21,12 +21,6 @@ public class InjectResolver: InjectContext {
     var cachedMappedResolvers: [TypeHashable: InstanceResolver]
     var resolvers: [InstanceResolver]
     
-    init(parentProvider: InjectResolver) {
-        self.resolvers = parentProvider.resolvers
-        self.mappedResolvers = parentProvider.mappedResolvers
-        self.cachedMappedResolvers = parentProvider.mappedResolvers
-    }
-    
     /// Default init
     public init() {
         self.mappedResolvers = [:]
