@@ -9,7 +9,7 @@
 import Foundation
 import Impose
 
-public class WrappedInjectSub: ScopableInitiable {
+public class WrappedInjectSub {
     
     @Injected
     var dependency: Dependency
@@ -18,30 +18,19 @@ public class WrappedInjectSub: ScopableInitiable {
     @Injected
     var grandChildDependency: GrandChildDependency
     
-    public required init(using context: InjectContext) {
-        scoped(by: context)
-    }
-    
     public init() { }
 }
 
 public class WrappedInject: WrappedInjectSub {
     
-    @Scoped
     var sub: WrappedInjectSub
-    
-    public required init(using context: InjectContext) {
-        sub = .init()
-        super.init(using: context)
-    }
     
     public override init() {
         sub = .init()
-        super.init()
     }
 }
 
-public class InitInject: ScopableInitiable {
+public class InitInject {
     
     var dependency: Dependency
     var childDependency: ChildDependency
@@ -53,11 +42,5 @@ public class InitInject: ScopableInitiable {
         self.dependency = dependency
         self.childDependency = someDependency
         self.grandChildDependency = someOtherDependency
-    }
-    
-    public required init(using context: InjectContext) {
-        dependency = inject(providedBy: context)
-        childDependency = inject(providedBy: context)
-        grandChildDependency = inject(providedBy: context)
     }
 }

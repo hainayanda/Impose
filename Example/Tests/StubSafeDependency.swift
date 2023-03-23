@@ -9,7 +9,7 @@
 import Foundation
 import Impose
 
-public class WrappedSafeInject: ScopableInitiable {
+public class WrappedSafeInject {
     
     @SafelyInjected
     var dependency: Dependency?
@@ -18,16 +18,10 @@ public class WrappedSafeInject: ScopableInitiable {
     @SafelyInjected
     var grandChildDependency: GrandChildDependency?
     
-    public required init(using context: InjectContext) {
-        _dependency = .init(using: context)
-        _childDependency = .init(using: context)
-        _grandChildDependency = .init(using: context)
-    }
-    
     public init() { }
 }
 
-public class InitSafeInject: ScopableInitiable {
+public class InitSafeInject {
     
     var dependency: Dependency?
     var childDependency: ChildDependency?
@@ -39,11 +33,5 @@ public class InitSafeInject: ScopableInitiable {
         self.dependency = dependency
         self.childDependency = someDependency
         self.grandChildDependency = someOtherDependency
-    }
-    
-    public required init(using context: InjectContext) {
-        dependency = injectIfProvided(providedBy: context)
-        childDependency = injectIfProvided(providedBy: context)
-        grandChildDependency = injectIfProvided(providedBy: context)
     }
 }
