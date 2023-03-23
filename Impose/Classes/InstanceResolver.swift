@@ -14,7 +14,6 @@ protocol InstanceResolver: AnyObject {
     func isResolver<T>(of anyType: T.Type) -> Bool
     func canBeResolved(by otherResolver: InstanceResolver) -> Bool
     func resolveInstance() -> Any
-    func cloneWithNoInstance() -> InstanceResolver
 }
 
 // MARK: InstanceProvider class
@@ -34,10 +33,6 @@ class InstanceProvider<Instance>: InstanceResolver {
     }
     
     func resolveInstance() -> Any {
-        fatalError("should be overridden")
-    }
-    
-    func cloneWithNoInstance() -> InstanceResolver {
         fatalError("should be overridden")
     }
 }
@@ -71,10 +66,6 @@ class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
     override func resolveInstance() -> Any {
         instance
     }
-    
-    override func cloneWithNoInstance() -> InstanceResolver {
-        SingleInstanceProvider(resolver: resolver)
-    }
 }
 
 // MARK: FactoryInstanceProvider class
@@ -88,10 +79,6 @@ class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
     
     override func resolveInstance() -> Any {
         return resolver()
-    }
-    
-    override func cloneWithNoInstance() -> InstanceResolver {
-        FactoryInstanceProvider(resolver: resolver)
     }
 }
 
@@ -119,10 +106,6 @@ class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance
             return newInstance
         }
         return instance
-    }
-    
-    override func cloneWithNoInstance() -> InstanceResolver {
-        WeakSingleInstanceProvider(resolver: resolver)
     }
 }
 

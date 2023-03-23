@@ -8,13 +8,6 @@
 import Foundation
 
 extension Dictionary where Value == InstanceResolver {
-    func withNoInstances() -> [Key: Value] {
-        self.reduce([:]) { partialResult, pair in
-            var result = partialResult
-            result[pair.key] = pair.value.cloneWithNoInstance()
-            return result
-        }
-    }
     
     var uniqueValueInstances: [Value] {
         self.reduce([]) { partialResult, pair in

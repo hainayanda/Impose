@@ -54,7 +54,7 @@ public class Injector: InjectResolver {
     @available(*, deprecated, message: "Use Environment instead")
     public func newScopedContext() -> InjectContext {
         let context = InjectResolver()
-        let mappedResolvers = scopedResolver.mappedResolvers.withNoInstances()
+        let mappedResolvers = scopedResolver.mappedResolvers
         let allResolvers: [InstanceResolver] = mappedResolvers.uniqueValueInstances
         context.mappedResolvers = mappedResolvers
         context.resolvers = allResolvers
