@@ -18,11 +18,9 @@ Impose is a simple dependency injection library for Swift
 
 - Swift 5.0 or higher (or 5.3 when using Swift Package Manager)
 - iOS 9.3 or higher (or 10 when using Swift Package Manager)
-
-### Only Swift Package Manager
-
 - macOS 10.10 or higher
 - tvOS 10 or higher
+- WatchOS 4 or higher
 
 ## Installation
 
@@ -31,14 +29,14 @@ Impose is a simple dependency injection library for Swift
 Impose is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'Impose', '~> 3.3.0'
+pod 'Impose', '~> 3.4.0'
 ```
 
 ### Swift Package Manager from XCode
 
 - Add it using XCode menu **File > Swift Package > Add Package Dependency**
 - Add **https://github.com/hainayanda/Impose.git** as Swift Package URL
-- Set rules at **version**, with **Up to Next Major** option and put **3.3.0** as its version
+- Set rules at **version**, with **Up to Next Major** option and put **3.4.0** as its version
 - Click next and wait
 
 ### Swift Package Manager from Package.swift
@@ -47,7 +45,7 @@ Add as your target dependency in **Package.swift**
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/hainayanda/Impose.git", .upToNextMajor(from: "3.3.0"))
+    .package(url: "https://github.com/hainayanda/Impose.git", .upToNextMajor(from: "3.4.0"))
 ]
 ```
 
