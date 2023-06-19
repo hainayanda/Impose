@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Impose'
-  s.version          = '3.3.0'
+  s.version          = '3.4.0'
   s.summary          = 'Simple dependency injection library for Swift.'
 
 # This description is used to generate tags and improve search results.
@@ -29,6 +29,9 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
+  s.osx.deployment_target = "10.10"
+  s.tvos.deployment_target = '10.0'
+  s.watchos.deployment_target = '4.0'
 
   s.source_files = 'Impose/Classes/**/*'
   
