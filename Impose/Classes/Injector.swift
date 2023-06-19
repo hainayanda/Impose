@@ -33,27 +33,11 @@ public class Injector: InjectResolver {
     static let defaultInjector: Injector = Injector()
     static var customInjector: Injector?
     
-    // MARK: Internal Properties
-    @available(*, deprecated, message: "Use Environment instead")
-    lazy var scopedResolver: InjectResolver = InjectResolver()
-    
     // MARK: Public Properties
     
     /// Default init
     public override init() {
         super.init()
-    }
-    
-    // MARK: Scoped
-    
-    @available(*, deprecated, message: "Use Environment instead")
-    public func newScopedContext() -> InjectContext {
-        let context = InjectResolver()
-        let mappedResolvers = scopedResolver.mappedResolvers
-        let allResolvers: [InstanceResolver] = mappedResolvers.uniqueValueInstances
-        context.mappedResolvers = mappedResolvers
-        context.resolvers = allResolvers
-        return context
     }
     
     @discardableResult
@@ -124,35 +108,6 @@ public class Injector: InjectResolver {
     
     // MARK: Scoped
     
-    @available(*, deprecated, message: "Use Environment instead")
-    /// provide scoped resolver for the given type
-    /// it basically a singleton but in scoped manner.
-    /// it will reused the same instance in same scoped
-    /// if there is no scope, then it will act like a singleton
-    /// - Parameters:
-    ///   - anyType: type of resolver
-    ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addScoped<T>(for anyType: Any.Type, resolver: @escaping () -> T) {
-        scopedResolver.mappedResolvers[anyType] = SingleInstanceProvider(resolver: resolver)
-        scopedResolver.cleanCachedAndRepopulate()
-    }
-    
-    @available(*, deprecated, message: "Use Environment instead")
-    /// provide scoped resolver for the given type
-    /// it basically a singleton but in scoped manner.
-    /// it will reused the same instance in same scoped
-    /// if there is no scope, then it will act like a singleton
-    /// - Parameters:
-    ///   - anyTypes: types of resolver
-    ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addScoped<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) {
-        let resolver = SingleInstanceProvider(resolver: resolver)
-        for type in anyTypes {
-            scopedResolver.mappedResolvers[type] = resolver
-        }
-        scopedResolver.cleanCachedAndRepopulate()
-    }
-    
     // MARK: Weak
     
     @discardableResult
@@ -193,11 +148,7 @@ public class Injector: InjectResolver {
     /// - Throws: ImposeError
     /// - Returns: instance resolved
     public override func resolve<T>(_ type: T.Type) throws -> T {
-        do {
-            return try super.resolve(type)
-        } catch {
-            return try scopedResolver.resolve(type)
-        }
+        return try super.resolve(type)
     }
     
     // MARK: Module
@@ -255,32 +206,6 @@ public extension Injector {
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
     func addSingleton<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
         addSingleton(for: anyTypes, resolver: resolver)
-    }
-    
-    // MARK: Scoped
-    
-    @available(*, deprecated, message: "Use Environment instead")
-    /// provide scoped resolver for the given type
-    /// it basically a singleton but in scoped manner.
-    /// it will reused the same instance in same scoped
-    /// if there is no scope, then it will act like a singleton
-    /// - Parameters:
-    ///   - anyType: type of resolver
-    ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    func addScoped<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) {
-        addScoped(for: anyType, resolver: resolver)
-    }
-    
-    @available(*, deprecated, message: "Use Environment instead")
-    /// provide scoped resolver for the given type
-    /// it basically a singleton but in scoped manner.
-    /// it will reused the same instance in same scoped
-    /// if there is no scope, then it will act like a singleton
-    /// - Parameters:
-    ///   - anyTypes: types of resolver
-    ///   - resolver: autoclosure that will be called to create instance if asked for given types
-    func addScoped<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) {
-        addScoped(for: anyTypes, resolver: resolver)
     }
     
     // MARK: Weak
