@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0119530EBE8BC6CB1749E867B1D799A4 /* Scopable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678350E70E366D70983849F927B52190 /* Scopable.swift */; };
 		01236C984BBB2918575C35713E2E08B4 /* BeLessThanOrEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586B5A37C0A10198805DA6175B2EB342 /* BeLessThanOrEqual.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		057C1964EBAFCBC649F8012723CDADF5 /* SatisfyAnyOf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C0C122235EDD894313B02C03C7C538 /* SatisfyAnyOf.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		0650AF0DB8DE333CE5D99D704E29AC02 /* AllPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12262F224D0D0A168C398C49F628A15 /* AllPass.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
@@ -231,7 +230,6 @@
 		622317B228B6CF5C9D75DA1008B0F2B8 /* QuickObjCRuntime.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = QuickObjCRuntime.h; path = Sources/QuickObjCRuntime/include/QuickObjCRuntime.h; sourceTree = "<group>"; };
 		64B896AB55261B6E62E0FC506B92A8EC /* AssertionRecorder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssertionRecorder.swift; path = Sources/Nimble/Adapters/AssertionRecorder.swift; sourceTree = "<group>"; };
 		654A3ADC4BC6E05E9BDC2D8F858A74BA /* CwlCatchException.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CwlCatchException.m; path = Carthage/Checkouts/CwlCatchException/Sources/CwlCatchExceptionSupport/CwlCatchException.m; sourceTree = "<group>"; };
-		678350E70E366D70983849F927B52190 /* Scopable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Scopable.swift; path = Impose/Classes/Scopable.swift; sourceTree = "<group>"; };
 		67A91DF9E678606788A96C9150D53EA6 /* Expression.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Expression.swift; path = Sources/Nimble/Expression.swift; sourceTree = "<group>"; };
 		6BAC25BC63EBD14D35CDE94813660768 /* MatchError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MatchError.swift; path = Sources/Nimble/Matchers/MatchError.swift; sourceTree = "<group>"; };
 		6C5852911233E16D8DBA632AAF28C4C0 /* BeNil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeNil.swift; path = Sources/Nimble/Matchers/BeNil.swift; sourceTree = "<group>"; };
@@ -493,7 +491,6 @@
 				EE259B0940C68E9DF1C8E9E7FF12EB7C /* ModuleProvider.swift */,
 				B6C874A61602AFEC15B586FD82A440DA /* PropertyWrapper.swift */,
 				13BA6877C86464A9986DBE22E865CE1F /* ResolverFunction.swift */,
-				678350E70E366D70983849F927B52190 /* Scopable.swift */,
 				D7FEFFBDD6E888556BB28EA9F6A2BE3D /* TypeHashable.swift */,
 				5FD8EEC2E10CC638216039725A60D94A /* Pod */,
 				AA5C8691BBC273090D99871F8D833F27 /* Support Files */,
@@ -844,7 +841,6 @@
 				5200969A3EA2CE2B88A9DEC371BAA107 /* ModuleProvider.swift in Sources */,
 				6875FFF2CF40CD67ECAE212EB9E746F1 /* PropertyWrapper.swift in Sources */,
 				3923CDBA58AF0065A7C314BA72962B60 /* ResolverFunction.swift in Sources */,
-				0119530EBE8BC6CB1749E867B1D799A4 /* Scopable.swift in Sources */,
 				50FE064E2BB5709AED743A914E0859AA /* TypeHashable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
