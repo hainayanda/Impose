@@ -182,6 +182,16 @@ This provider is a combination of singleton and transient providers. It will sto
 Injector.shared.addWeakSingleton(for: Dependency.self, SomeDependency())
 ```
 
+## DispatchQueue for injection
+
+You can pass a `DispatchQueue` instance to be used when resolving the instance. Like for example, if your dependency should be initialized from main thread, just do it like this:
+
+ ```swift
+Injector.shared.addTransient(for: Dependency.self, resolveOn: .main, SomeDependency())
+```
+
+If you pass nothing it will try to resolve the dependency on the `DispatchQueue` when dependency resolver is injected.
+
 ## Environment
 
 You can define a specific environment for a specific object that will live with that object and become the primary source of dependencies by using the Environment object:
@@ -217,6 +227,10 @@ class MyObject {
 ## Circular Dependency
 
 `Injected` and `SafelyInjected` propertyWrapper will resolve dependency lazily, thus it will work even if you have a circular dependency. But it will rise a stack overflow error if you use inject function instead of init since it will resolve the dependency right away. Even tho circular dependency is not recommended, it will be better if you use propertyWrapper instead for injection to avoid this problem.
+
+## Multi threading injection
+
+Impose are designed to resolve the dependency atomically. So as long as the dependency is Thread safe, the resolving will be Thread safe.
 
 ## Multiple Types for one Provider
 

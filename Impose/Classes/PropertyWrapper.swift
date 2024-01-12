@@ -52,7 +52,7 @@ public class Injected<T>: EnvironmentInjectable, ManualAssignedProviderExtractab
     
     func manualAssignedProvider() -> (Any.Type, InstanceResolver)? {
         guard assignedManually, let instance = _wrappedValue else { return nil }
-        return (T.self, SingleInstanceProvider { instance })
+        return (T.self, SingleInstanceProvider(queue: nil) { instance })
     }
 }
 
@@ -95,6 +95,6 @@ public class SafelyInjected<T>: EnvironmentInjectable, ManualAssignedProviderExt
     
     func manualAssignedProvider() -> (Any.Type, InstanceResolver)? {
         guard assignedManually, let instance = _wrappedValue else { return nil }
-        return (T.self, SingleInstanceProvider { instance })
+        return (T.self, SingleInstanceProvider(queue: nil) { instance })
     }
 }

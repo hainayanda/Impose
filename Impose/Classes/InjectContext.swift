@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Chary
 
 // MARK: InjectResolving
 
@@ -17,22 +18,25 @@ public protocol InjectContext: AnyObject {
 
 public class InjectResolver: InjectContext {
     
-    var mappedResolvers: [TypeHashable: InstanceResolver]
-    var cachedMappedResolvers: [TypeHashable: InstanceResolver]
-    var resolvers: [InstanceResolver]
+    @Atomic var mappedResolvers: [TypeHashable: InstanceResolver] = [:]
+    @Atomic var cachedMappedResolvers: [TypeHashable: InstanceResolver] = [:]
+    @Atomic var resolvers: [InstanceResolver] = []
+    lazy var atomicQueue: DispatchQueue = .init(label: "InjectResolver_\(UUID().uuidString)")
     
     /// Default init
     public init() {
-        self.mappedResolvers = [:]
-        self.cachedMappedResolvers = [:]
-        self.resolvers = []
+        $mappedResolvers = atomicQueue
+        $cachedMappedResolvers = atomicQueue
+        $resolvers = atomicQueue
     }
     
     /// Remove all provider
     public func reset() {
-        self.mappedResolvers = [:]
-        self.cachedMappedResolvers = [:]
-        self.resolvers = []
+        sync {
+            self.mappedResolvers = [:]
+            self.cachedMappedResolvers = [:]
+            self.resolvers = []
+        }
     }
     
     // MARK: Resolve
@@ -44,16 +48,18 @@ public class InjectResolver: InjectContext {
     /// - Throws: ImposeError
     /// - Returns: instance resolved
     public func resolve<T>(_ type: T.Type) throws -> T {
-        guard let resolver = mappedResolvers[type] ?? cachedMappedResolvers[type] else {
-            return try findAndCachedCompatibleInstance(of: type)
+        try sync {
+            guard let resolver = mappedResolvers[type] ?? cachedMappedResolvers[type] else {
+                return try findAndCachedCompatibleInstance(of: type)
+            }
+            guard let instance = resolver.resolveInstance() as? T else {
+                throw ImposeError(
+                    errorDescription: "Impose Error: fail when resolving instance",
+                    failureReason: "Provider instance type is not compatible for \(T.self)"
+                )
+            }
+            return instance
         }
-        guard let instance = resolver.resolveInstance() as? T else {
-            throw ImposeError(
-                errorDescription: "Impose Error: fail when resolving instance",
-                failureReason: "Provider instance type is not compatible for \(T.self)"
-            )
-        }
-        return instance
     }
     
     // MARK: Internal Method
@@ -72,8 +78,6 @@ public class InjectResolver: InjectContext {
             failureReason: "No compatible resolver for \(T.self)"
         )
     }
-    
-    // MARK: Internal Methods
     
     func findPotentialResolvers<T>(for type: T.Type) -> [InstanceResolver] {
         resolvers.reduce([InstanceResolver]()) { partialResult, value in
@@ -97,5 +101,9 @@ public class InjectResolver: InjectContext {
     func cleanCachedAndRepopulate() {
         cachedMappedResolvers.removeAll()
         resolvers = mappedResolvers.uniqueValueInstances
+    }
+    
+    func sync<T>(_ work: () throws -> T) rethrows -> T {
+        try atomicQueue.safeSync(flags: .barrier, execute: work)
     }
 }

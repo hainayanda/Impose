@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Chary
 
 /// Injector class
-public class Injector: InjectResolver {
+public final class Injector: InjectResolver {
     
     // MARK: Public Static
     
@@ -42,10 +43,12 @@ public class Injector: InjectResolver {
     
     @discardableResult
     public func removeResolver<T>(of type: T.Type) -> Bool {
-        defer {
-            cleanCachedAndRepopulate()
+        sync {
+            defer {
+                cleanCachedAndRepopulate()
+            }
+            return mappedResolvers.removeValue(forKey: .init(metaType: type)) != nil
         }
-        return mappedResolvers.removeValue(forKey: .init(metaType: type)) != nil
     }
     
     // MARK: Transient
@@ -56,11 +59,16 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addTransient<T>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
-        mappedResolvers[anyType] = FactoryInstanceProvider(resolver: resolver)
-        cleanCachedAndRepopulate()
-        return self
-    }
+    public func addTransient<T>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = .current,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                mappedResolvers[anyType] = FactoryInstanceProvider(queue: queue, resolver: resolver)
+                cleanCachedAndRepopulate()
+                return self
+            }
+        }
     
     @discardableResult
     /// provide transient resolver for the given type
@@ -68,14 +76,19 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addTransient<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
-        let resolver = FactoryInstanceProvider(resolver: resolver)
-        for type in anyTypes {
-            mappedResolvers[type] = resolver
+    public func addTransient<T>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = .current,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                let resolver = FactoryInstanceProvider(queue: queue, resolver: resolver)
+                for type in anyTypes {
+                    mappedResolvers[type] = resolver
+                }
+                cleanCachedAndRepopulate()
+                return self
+            }
         }
-        cleanCachedAndRepopulate()
-        return self
-    }
     
     // MARK: Singleton
     
@@ -85,11 +98,16 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addSingleton<T>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
-        mappedResolvers[anyType] = SingleInstanceProvider(resolver: resolver)
-        cleanCachedAndRepopulate()
-        return self
-    }
+    public func addSingleton<T>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = .current,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                mappedResolvers[anyType] = SingleInstanceProvider(queue: queue, resolver: resolver)
+                cleanCachedAndRepopulate()
+                return self
+            }
+        }
     
     @discardableResult
     /// provide singleton resolver for the given type
@@ -97,14 +115,19 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addSingleton<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
-        let resolver = SingleInstanceProvider(resolver: resolver)
-        for type in anyTypes {
-            mappedResolvers[type] = resolver
+    public func addSingleton<T>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = .current,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                let resolver = SingleInstanceProvider(queue: queue, resolver: resolver)
+                for type in anyTypes {
+                    mappedResolvers[type] = resolver
+                }
+                cleanCachedAndRepopulate()
+                return self
+            }
         }
-        cleanCachedAndRepopulate()
-        return self
-    }
     
     // MARK: Scoped
     
@@ -117,11 +140,16 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
-        mappedResolvers[anyType] = WeakSingleInstanceProvider(resolver: resolver)
-        cleanCachedAndRepopulate()
-        return self
-    }
+    public func addWeakSingleton<T: AnyObject>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = .current,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                mappedResolvers[anyType] = WeakSingleInstanceProvider(queue: queue, resolver: resolver)
+                cleanCachedAndRepopulate()
+                return self
+            }
+        }
     
     @discardableResult
     /// provide scoped resolver for the given type
@@ -130,14 +158,19 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
-        let resolver = WeakSingleInstanceProvider(resolver: resolver)
-        for type in anyTypes {
-            mappedResolvers[type] = resolver
+    public func addWeakSingleton<T: AnyObject>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = .current,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                let resolver = WeakSingleInstanceProvider(queue: queue, resolver: resolver)
+                for type in anyTypes {
+                    mappedResolvers[type] = resolver
+                }
+                cleanCachedAndRepopulate()
+                return self
+            }
         }
-        cleanCachedAndRepopulate()
-        return self
-    }
     
     // MARK: Resolve
     
@@ -147,7 +180,7 @@ public class Injector: InjectResolver {
     /// - Parameter type: type
     /// - Throws: ImposeError
     /// - Returns: instance resolved
-    public override func resolve<T>(_ type: T.Type) throws -> T {
+    @inlinable public override func resolve<T>(_ type: T.Type) throws -> T {
         return try super.resolve(type)
     }
     
@@ -155,7 +188,7 @@ public class Injector: InjectResolver {
     
     /// It will automatically run module injector provide(for:) with its service imposer
     /// - Parameter moduleProvider: the ModuleProvider
-    public func provide(using moduleProvider: ModuleProvider) {
+    @inlinable public func provide(using moduleProvider: ModuleProvider) {
         moduleProvider.provide(for: self)
     }
 }
@@ -172,9 +205,12 @@ public extension Injector {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    func addTransient<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addTransient(for: anyType, resolver: resolver)
-    }
+    @inlinable func addTransient<T>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = .current,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            addTransient(for: anyType, resolveOn: queue, resolver: resolver)
+        }
     
     @discardableResult
     /// provide singleton resolver for the given type
@@ -182,9 +218,12 @@ public extension Injector {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    func addTransient<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addTransient(for: anyTypes, resolver: resolver)
-    }
+    @inlinable func addTransient<T>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = .current,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            addTransient(for: anyTypes, resolveOn: queue, resolver: resolver)
+        }
     
     // MARK: Singleton
     
@@ -194,9 +233,12 @@ public extension Injector {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    func addSingleton<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addSingleton(for: anyType, resolver: resolver)
-    }
+    @inlinable func addSingleton<T>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = .current,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            addSingleton(for: anyType, resolveOn: queue, resolver: resolver)
+        }
     
     @discardableResult
     /// provide singleton resolver for the given type
@@ -204,9 +246,12 @@ public extension Injector {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
-    func addSingleton<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addSingleton(for: anyTypes, resolver: resolver)
-    }
+    @inlinable func addSingleton<T>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = .current,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            addSingleton(for: anyTypes, resolveOn: queue, resolver: resolver)
+        }
     
     // MARK: Weak
     
@@ -217,9 +262,12 @@ public extension Injector {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addWeakSingleton(for: anyType, resolver: resolver)
-    }
+    @inlinable func addWeakSingleton<T: AnyObject>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = .current,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            addWeakSingleton(for: anyType, resolveOn: queue, resolver: resolver)
+        }
     
     @discardableResult
     /// provide scoped resolver for the given type
@@ -228,7 +276,10 @@ public extension Injector {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addWeakSingleton(for: anyTypes, resolver: resolver)
-    }
+    @inlinable func addWeakSingleton<T: AnyObject>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = .current,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            addWeakSingleton(for: anyTypes, resolveOn: queue, resolver: resolver)
+        }
 }
