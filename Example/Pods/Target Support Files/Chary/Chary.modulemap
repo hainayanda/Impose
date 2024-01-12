@@ -1,0 +1,6 @@
+framework module Chary {
+  umbrella header "Chary-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,5 +1,7 @@
 PODS:
-  - Impose (3.1.2)
+  - Chary (1.0.4)
+  - Impose (3.4.0):
+    - Chary (~> 1.0.4)
   - Nimble (10.0.0)
   - Quick (5.0.1)
 
@@ -10,6 +12,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Chary
     - Nimble
     - Quick
 
@@ -18,10 +21,11 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Impose: ad14652aa687c41f3f4f72632fa8312eb37182a9
+  Chary: 0bd63751d5ab6dd02d506b6cc38c31a9609b2682
+  Impose: 8d5ca190548140271d5d739315c55d62a47e4924
   Nimble: 5316ef81a170ce87baf72dd961f22f89a602ff84
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
 
 PODFILE CHECKSUM: d540953ebd65494764fa854ccc0939601faebcd6
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1
