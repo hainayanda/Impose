@@ -40,13 +40,16 @@ final public class Environment: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func inject<T>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = nil, resolver: @escaping () -> T) -> Self {
-        sync {
-            mappedResolvers[anyType] = SingleInstanceProvider(queue: queue, resolver: resolver)
-            cleanCachedAndRepopulate()
-            return self
+    public func inject<T>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = nil,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                mappedResolvers[anyType] = SingleInstanceProvider(queue: queue, resolver: resolver)
+                cleanCachedAndRepopulate()
+                return self
+            }
         }
-    }
     
     @discardableResult
     /// provide environment resolver for the given type
@@ -54,16 +57,19 @@ final public class Environment: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func inject<T>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = nil, resolver: @escaping () -> T) -> Self {
-        sync {
-            let resolver = SingleInstanceProvider(queue: queue, resolver: resolver)
-            for type in anyTypes {
-                mappedResolvers[type] = resolver
+    public func inject<T>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = nil,
+        resolver: @escaping () -> T) -> Self {
+            sync {
+                let resolver = SingleInstanceProvider(queue: queue, resolver: resolver)
+                for type in anyTypes {
+                    mappedResolvers[type] = resolver
+                }
+                cleanCachedAndRepopulate()
+                return self
             }
-            cleanCachedAndRepopulate()
-            return self
         }
-    }
 }
 
 extension Environment {
@@ -74,9 +80,12 @@ extension Environment {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    @inlinable public func inject<T>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = nil, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        inject(for: anyType, resolveOn: queue, resolver: resolver)
-    }
+    @inlinable public func inject<T>(
+        for anyType: Any.Type,
+        resolveOn queue: DispatchQueue? = nil,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            inject(for: anyType, resolveOn: queue, resolver: resolver)
+        }
     
     @discardableResult
     /// provide environment resolver for the given type
@@ -84,9 +93,12 @@ extension Environment {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
-    @inlinable public func inject<T>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = nil, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        inject(for: anyTypes, resolveOn: queue, resolver: resolver)
-    }
+    @inlinable public func inject<T>(
+        for anyTypes: [Any.Type],
+        resolveOn queue: DispatchQueue? = nil,
+        _ resolver: @autoclosure @escaping () -> T) -> Self {
+            inject(for: anyTypes, resolveOn: queue, resolver: resolver)
+        }
 }
 
 private var environmentInjectorKey: UnsafeMutableRawPointer = malloc(1)
