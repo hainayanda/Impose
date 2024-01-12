@@ -18,7 +18,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/hainayanda/Chary.git", .upToNextMajor(from: "1.0.6")),
+        .package(url: "https://github.com/hainayanda/Chary.git", .upToNextMajor(from: "1.0.7")),
         // uncomment this code to test
 //        .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
 //        .package(url: "https://github.com/Quick/Nimble.git", from: "10.0.0")
