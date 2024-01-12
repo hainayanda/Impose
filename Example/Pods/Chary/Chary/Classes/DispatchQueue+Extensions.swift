@@ -76,7 +76,7 @@ extension DispatchQueue {
             let partialResult: Return? = try sync(flags: flags) {
                 let syncThread = Thread.current
                 // make sure only call block if its on different thread
-                // unless it will create a deadlock if the block are calling sync on same queue
+                // unless it will create a deadlock if the block are calling sync on same Thread especially with barrier
                 guard syncThread != callerThread else { return nil }
                 return try block()
             }

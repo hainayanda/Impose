@@ -1,5 +1,5 @@
 PODS:
-  - Chary (1.0.5)
+  - Chary (1.0.6)
   - Impose (3.4.0):
     - Chary (~> 1.0.5)
   - Nimble (10.0.0)
@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Chary: c084847750d3f26b5b5feb30a9d9a71d3f1ecb90
+  Chary: 09930c660bdaf75c4cb0240d7c4aa9572f425f1b
   Impose: 9cc570ee3ade6edb775cf2cf2541034623fde7cd
   Nimble: 5316ef81a170ce87baf72dd961f22f89a602ff84
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179

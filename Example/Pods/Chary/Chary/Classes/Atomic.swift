@@ -14,12 +14,12 @@ public final class Atomic<Wrapped> {
     var _wrappedValue: Wrapped
     public var wrappedValue: Wrapped {
         get {
-            dispatcher.safeSync(flags: .barrier) {
+            dispatcher.safeSync {
                 _wrappedValue
             }
         }
         set {
-            dispatcher.safeSync(flags: .barrier) {
+            dispatcher.safeSync {
                 _wrappedValue = newValue
             }
         }
@@ -37,7 +37,7 @@ public final class Atomic<Wrapped> {
     }
     
     public init(wrappedValue: Wrapped) {
-        self.dispatcher = DispatchQueue(label: "Chary_Atomic_\(UUID().uuidString)", attributes: .concurrent)
+        self.dispatcher = DispatchQueue(label: "Chary_Atomic_\(UUID().uuidString)")
         self._wrappedValue = wrappedValue
         self.dispatcher.registerDetection()
     }
