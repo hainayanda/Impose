@@ -21,6 +21,8 @@ protocol InstanceResolver: AnyObject {
 
 class InstanceProvider<Instance>: InstanceResolver {
     
+    typealias Resolver = () -> Instance
+    
     @inlinable func canBeResolved(by otherResolver: InstanceResolver) -> Bool {
         otherResolver.isResolver(of: Instance.self)
     }
@@ -41,17 +43,21 @@ class InstanceProvider<Instance>: InstanceResolver {
 // MARK: SingleInstanceProvider class
 
 final class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
-    let resolver: () -> Instance
+    private var _resolver: Resolver?
+    var resolver: Resolver { _resolver! }
+    
+    var resolved: Bool { _resolver == nil }
+    
     let queue: DispatchQueue?
-    var resolved: Bool = false
+    
     private lazy var _instance: Instance = queue?.safeSync(execute: resolver) ?? resolver()
     var instance: Instance {
-        defer { resolved = true }
+        defer { _resolver = nil }
         return _instance
     }
     
     @inlinable init(queue: DispatchQueue?, resolver: @escaping () -> Instance) {
-        self.resolver = resolver
+        self._resolver = resolver
         self.queue = queue
     }
     
@@ -72,7 +78,7 @@ final class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
 // MARK: FactoryInstanceProvider class
 
 final class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
-    let resolver: () -> Instance
+    let resolver: Resolver
     let queue: DispatchQueue?
     
     @inlinable init(queue: DispatchQueue?, resolver: @escaping () -> Instance) {
@@ -86,7 +92,7 @@ final class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
 }
 
 final class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance> {
-    let resolver: () -> Instance
+    let resolver: Resolver
     let queue: DispatchQueue?
     weak var instance: Instance?
     
