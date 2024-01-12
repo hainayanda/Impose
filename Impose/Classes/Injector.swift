@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Chary
 
 /// Injector class
-public class Injector: InjectResolver {
+public final class Injector: InjectResolver {
     
     // MARK: Public Static
     
@@ -58,9 +59,9 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addTransient<T>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
+    public func addTransient<T>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = .current, resolver: @escaping () -> T) -> Self {
         sync {
-            mappedResolvers[anyType] = FactoryInstanceProvider(resolver: resolver)
+            mappedResolvers[anyType] = FactoryInstanceProvider(queue: queue, resolver: resolver)
             cleanCachedAndRepopulate()
             return self
         }
@@ -72,9 +73,9 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addTransient<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
+    public func addTransient<T>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = .current, resolver: @escaping () -> T) -> Self {
         sync {
-            let resolver = FactoryInstanceProvider(resolver: resolver)
+            let resolver = FactoryInstanceProvider(queue: queue, resolver: resolver)
             for type in anyTypes {
                 mappedResolvers[type] = resolver
             }
@@ -91,9 +92,9 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addSingleton<T>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
+    public func addSingleton<T>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = .current, resolver: @escaping () -> T) -> Self {
         sync {
-            mappedResolvers[anyType] = SingleInstanceProvider(resolver: resolver)
+            mappedResolvers[anyType] = SingleInstanceProvider(queue: queue, resolver: resolver)
             cleanCachedAndRepopulate()
             return self
         }
@@ -105,9 +106,9 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addSingleton<T>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
+    public func addSingleton<T>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = .current, resolver: @escaping () -> T) -> Self {
         sync {
-            let resolver = SingleInstanceProvider(resolver: resolver)
+            let resolver = SingleInstanceProvider(queue: queue, resolver: resolver)
             for type in anyTypes {
                 mappedResolvers[type] = resolver
             }
@@ -127,9 +128,9 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolver: @escaping () -> T) -> Self {
+    public func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = .current, resolver: @escaping () -> T) -> Self {
         sync {
-            mappedResolvers[anyType] = WeakSingleInstanceProvider(resolver: resolver)
+            mappedResolvers[anyType] = WeakSingleInstanceProvider(queue: queue, resolver: resolver)
             cleanCachedAndRepopulate()
             return self
         }
@@ -142,9 +143,9 @@ public class Injector: InjectResolver {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolver: @escaping () -> T) -> Self {
+    public func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = .current, resolver: @escaping () -> T) -> Self {
         sync {
-            let resolver = WeakSingleInstanceProvider(resolver: resolver)
+            let resolver = WeakSingleInstanceProvider(queue: queue, resolver: resolver)
             for type in anyTypes {
                 mappedResolvers[type] = resolver
             }
@@ -186,8 +187,8 @@ public extension Injector {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    @inlinable func addTransient<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addTransient(for: anyType, resolver: resolver)
+    @inlinable func addTransient<T>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = .current, _ resolver: @autoclosure @escaping () -> T) -> Self {
+        addTransient(for: anyType, resolveOn: queue, resolver: resolver)
     }
     
     @discardableResult
@@ -196,8 +197,8 @@ public extension Injector {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    @inlinable func addTransient<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addTransient(for: anyTypes, resolver: resolver)
+    @inlinable func addTransient<T>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = .current, _ resolver: @autoclosure @escaping () -> T) -> Self {
+        addTransient(for: anyTypes, resolveOn: queue, resolver: resolver)
     }
     
     // MARK: Singleton
@@ -208,8 +209,8 @@ public extension Injector {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given type
-    @inlinable func addSingleton<T>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addSingleton(for: anyType, resolver: resolver)
+    @inlinable func addSingleton<T>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = .current, _ resolver: @autoclosure @escaping () -> T) -> Self {
+        addSingleton(for: anyType, resolveOn: queue, resolver: resolver)
     }
     
     @discardableResult
@@ -218,8 +219,8 @@ public extension Injector {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: autoclosure that will be called to create instance if asked for given types
-    @inlinable func addSingleton<T>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addSingleton(for: anyTypes, resolver: resolver)
+    @inlinable func addSingleton<T>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = .current, _ resolver: @autoclosure @escaping () -> T) -> Self {
+        addSingleton(for: anyTypes, resolveOn: queue, resolver: resolver)
     }
     
     // MARK: Weak
@@ -231,8 +232,8 @@ public extension Injector {
     /// - Parameters:
     ///   - anyType: type of resolver
     ///   - resolver: closure that will be called to create instance if asked for given type
-    @inlinable func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addWeakSingleton(for: anyType, resolver: resolver)
+    @inlinable func addWeakSingleton<T: AnyObject>(for anyType: Any.Type, resolveOn queue: DispatchQueue? = .current, _ resolver: @autoclosure @escaping () -> T) -> Self {
+        addWeakSingleton(for: anyType, resolveOn: queue, resolver: resolver)
     }
     
     @discardableResult
@@ -242,7 +243,7 @@ public extension Injector {
     /// - Parameters:
     ///   - anyTypes: types of resolver
     ///   - resolver: closure that will be called to create instance if asked for given types
-    @inlinable func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], _ resolver: @autoclosure @escaping () -> T) -> Self {
-        addWeakSingleton(for: anyTypes, resolver: resolver)
+    @inlinable func addWeakSingleton<T: AnyObject>(for anyTypes: [Any.Type], resolveOn queue: DispatchQueue? = .current, _ resolver: @autoclosure @escaping () -> T) -> Self {
+        addWeakSingleton(for: anyTypes, resolveOn: queue, resolver: resolver)
     }
 }

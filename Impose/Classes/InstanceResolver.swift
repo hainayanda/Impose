@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Chary
 
 // MARK: InstanceResolver protocol
 
@@ -20,39 +21,41 @@ protocol InstanceResolver: AnyObject {
 
 class InstanceProvider<Instance>: InstanceResolver {
     
-    func canBeResolved(by otherResolver: InstanceResolver) -> Bool {
+    @inlinable func canBeResolved(by otherResolver: InstanceResolver) -> Bool {
         otherResolver.isResolver(of: Instance.self)
     }
     
-    func isExactResolver<T>(of anyType: T.Type) -> Bool {
+    @inlinable func isExactResolver<T>(of anyType: T.Type) -> Bool {
         anyType == Instance.self
     }
     
-    func isResolver<T>(of anyType: T.Type) -> Bool {
+    @inlinable func isResolver<T>(of anyType: T.Type) -> Bool {
         isExactResolver(of: anyType) || isType(Instance.self, implement: T.self) || isType(Instance.self, subclassOf: T.self)
     }
     
-    func resolveInstance() -> Any {
+    @inlinable func resolveInstance() -> Any {
         fatalError("should be overridden")
     }
 }
 
 // MARK: SingleInstanceProvider class
 
-class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
-    var resolver: () -> Instance
+final class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
+    let resolver: () -> Instance
+    let queue: DispatchQueue?
     var resolved: Bool = false
-    private lazy var _instance: Instance = resolver()
+    private lazy var _instance: Instance = queue?.safeSync(execute: resolver) ?? resolver()
     var instance: Instance {
         defer { resolved = true }
         return _instance
     }
     
-    init(resolver: @escaping () -> Instance) {
+    @inlinable init(queue: DispatchQueue?, resolver: @escaping () -> Instance) {
         self.resolver = resolver
+        self.queue = queue
     }
     
-    override func isResolver<T>(of anyType: T.Type) -> Bool {
+    @inlinable override func isResolver<T>(of anyType: T.Type) -> Bool {
         if super.isResolver(of: anyType) {
             return true
         } else if resolved {
@@ -61,34 +64,38 @@ class SingleInstanceProvider<Instance>: InstanceProvider<Instance> {
         return false
     }
     
-    override func resolveInstance() -> Any {
+    @inlinable override func resolveInstance() -> Any {
         instance
     }
 }
 
 // MARK: FactoryInstanceProvider class
 
-class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
-    var resolver: () -> Instance
+final class FactoryInstanceProvider<Instance>: InstanceProvider<Instance> {
+    let resolver: () -> Instance
+    let queue: DispatchQueue?
     
-    init(resolver: @escaping () -> Instance) {
+    @inlinable init(queue: DispatchQueue?, resolver: @escaping () -> Instance) {
         self.resolver = resolver
+        self.queue = queue
     }
     
-    override func resolveInstance() -> Any {
-        return resolver()
+    @inlinable override func resolveInstance() -> Any {
+        queue?.safeSync(execute: resolver) ?? resolver()
     }
 }
 
-class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance> {
-    var resolver: () -> Instance
+final class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance> {
+    let resolver: () -> Instance
+    let queue: DispatchQueue?
     weak var instance: Instance?
     
-    init(resolver: @escaping () -> Instance) {
+    @inlinable init(queue: DispatchQueue?, resolver: @escaping () -> Instance) {
         self.resolver = resolver
+        self.queue = queue
     }
     
-    override func isResolver<T>(of anyType: T.Type) -> Bool {
+    @inlinable override func isResolver<T>(of anyType: T.Type) -> Bool {
         if super.isResolver(of: anyType) {
             return true
         } else if let instance = instance {
@@ -97,9 +104,9 @@ class WeakSingleInstanceProvider<Instance: AnyObject>: InstanceProvider<Instance
         return false
     }
     
-    override func resolveInstance() -> Any {
+    @inlinable override func resolveInstance() -> Any {
         guard let instance = instance else {
-            let newInstance = resolver()
+            let newInstance = queue?.safeSync(execute: resolver) ?? resolver()
             self.instance = newInstance
             return newInstance
         }

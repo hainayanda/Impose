@@ -13,7 +13,7 @@ import Foundation
 ///   - injector: Injector that will resolve the instance
 /// - Throws: ImposeError
 /// - Returns: instance resolved
-public func tryInject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil) throws -> T {
+@inlinable public func tryInject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil) throws -> T {
     if let resolver = resolver {
         let instance: T
         if let resolverInstance = try? resolver.resolve(type) {
@@ -55,7 +55,7 @@ public func inject<T>(
 ///   - injector: Injector that will resolve the instance
 ///   - resolve: autoclosure resolver to call if inject fail
 /// - Returns:  instance resolved
-public func inject<T>(
+@inlinable public func inject<T>(
     _ type: T.Type = T.self,
     providedBy resolver: InjectContext? = nil,
     ifFailUse resolve: @autoclosure () -> T) -> T {
@@ -67,7 +67,7 @@ public func inject<T>(
 ///   - type: type of instance
 ///   - injector: Injector that will resolve the instance
 /// - Returns: instance resolved
-public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil) -> T {
+@inlinable public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContext? = nil) -> T {
     // swiftlint:disable:next force_try
     try! tryInject(type, providedBy: resolver)
 }
@@ -77,6 +77,6 @@ public func inject<T>(_ type: T.Type = T.self, providedBy resolver: InjectContex
 ///   - type: type of instance
 ///   - injector: Injector that will resolve the instance
 /// - Returns: instance resolved if found and nil if not
-public func injectIfProvided<T>(for type: T.Type = T.self, providedBy resolver: InjectContext? = nil) -> T? {
+@inlinable public func injectIfProvided<T>(for type: T.Type = T.self, providedBy resolver: InjectContext? = nil) -> T? {
     try? tryInject(type, providedBy: resolver)
 }
