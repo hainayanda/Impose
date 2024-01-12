@@ -21,7 +21,7 @@ public class InjectResolver: InjectContext {
     @Atomic var mappedResolvers: [TypeHashable: InstanceResolver] = [:]
     @Atomic var cachedMappedResolvers: [TypeHashable: InstanceResolver] = [:]
     @Atomic var resolvers: [InstanceResolver] = []
-    lazy var atomicQueue: DispatchQueue = .init(label: "InjectResolver_\(UUID().uuidString)")
+    lazy var atomicQueue: DispatchQueue = .init(label: "InjectResolver_\(UUID().uuidString)", attributes: .concurrent)
     
     /// Default init
     public init() {
@@ -104,8 +104,6 @@ public class InjectResolver: InjectContext {
     }
     
     func sync<T>(_ work: () throws -> T) rethrows -> T {
-        try atomicQueue.safeSync(flags: .barrier) {
-            try work()
-        }
+        try atomicQueue.safeSync(flags: .barrier, execute: work)
     }
 }
