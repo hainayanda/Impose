@@ -36,7 +36,7 @@ pod 'Chary'
 
 - Add it using XCode menu **File > Swift Package > Add Package Dependency**
 - Add **<https://github.com/hainayanda/Chary.git>** as Swift Package URL
-- Set rules at **version**, with **Up to Next Major** option and put **1.0.4** as its version
+- Set rules at **version**, with **Up to Next Major** option and put **1.0.5** as its version
 - Click next and wait
 
 ### Swift Package Manager from Package.swift
@@ -45,7 +45,7 @@ Add as your target dependency in **Package.swift**
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/hainayanda/Chary.git", .upToNextMajor(from: "1.0.4"))
+  .package(url: "https://github.com/hainayanda/Chary.git", .upToNextMajor(from: "1.0.5"))
 ]
 ```
 

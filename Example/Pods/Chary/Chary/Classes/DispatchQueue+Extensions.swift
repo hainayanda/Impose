@@ -71,8 +71,16 @@ extension DispatchQueue {
     public func safeSync<Return>(
         flags: DispatchWorkItemFlags = [],
         execute block: () throws -> Return) rethrows -> Return {
-        try ifAtDifferentQueue {
-            try sync(flags: flags, execute: block)
+        return try ifAtDifferentQueue {
+            let callerThread = Thread.current
+            let partialResult: Return? = try sync(flags: flags) {
+                let syncThread = Thread.current
+                // make sure only call block if its on different thread
+                // unless it will create a deadlock if the block are calling sync on same queue
+                guard syncThread != callerThread else { return nil }
+                return try block()
+            }
+            return try partialResult ?? block()
         } ifNot: {
             try block()
         }
@@ -81,9 +89,7 @@ extension DispatchQueue {
     /// Perform safe synchronous task. It will run the block right away if turns out its on the same queue as the target
     /// - Parameter workItem: The work item to be invoked on the queue.
     public func safeSync(execute workItem: DispatchWorkItem) {
-        ifAtDifferentQueue {
-            sync(execute: workItem)
-        } ifNot: {
+        safeSync {
             workItem.perform()
         }
     }

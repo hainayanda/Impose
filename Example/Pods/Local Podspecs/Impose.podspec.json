@@ -24,7 +24,7 @@
   "source_files": "Impose/Classes/**/*",
   "dependencies": {
     "Chary": [
-      "~> 1.0.4"
+      "~> 1.0.5"
     ]
   },
   "swift_versions": "5.1",
