@@ -21,7 +21,7 @@ public class InjectResolver: InjectContext {
     @Atomic var mappedResolvers: [TypeHashable: InstanceResolver] = [:]
     @Atomic var cachedMappedResolvers: [TypeHashable: InstanceResolver] = [:]
     @Atomic var resolvers: [InstanceResolver] = []
-    lazy var atomicQueue: DispatchQueue = .init(label: "InjectResolver_\(UUID().uuidString)", attributes: .concurrent)
+    lazy var atomicQueue: DispatchQueue = .init(label: "InjectResolver_\(UUID().uuidString)")
     
     /// Default init
     public init() {
