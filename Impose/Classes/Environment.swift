@@ -9,7 +9,7 @@ import Foundation
 
 final public class Environment: InjectResolver {
     
-    public override init() {
+    @inlinable public override init() {
         super.init()
     }
     

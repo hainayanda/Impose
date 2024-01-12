@@ -15,12 +15,12 @@ public protocol AutoInjectMock {
 public extension AutoInjectMock {
     static var injector: Injector { .shared }
     
-    func inject(using injector: Injector) {
+    @inlinable func inject(using injector: Injector) {
         injector.addSingleton(for: Self.registeredTypes, self)
     }
     
     @discardableResult
-    func injected(using injector: Injector = .shared) -> Self {
+    @inlinable func injected(using injector: Injector = .shared) -> Self {
         inject(using: injector)
         return self
     }

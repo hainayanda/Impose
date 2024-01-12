@@ -170,7 +170,7 @@ public final class Injector: InjectResolver {
     
     /// It will automatically run module injector provide(for:) with its service imposer
     /// - Parameter moduleProvider: the ModuleProvider
-    public func provide(using moduleProvider: ModuleProvider) {
+    @inlinable public func provide(using moduleProvider: ModuleProvider) {
         moduleProvider.provide(for: self)
     }
 }
