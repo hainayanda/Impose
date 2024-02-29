@@ -7,13 +7,13 @@
 
 import Foundation
 
-final public class Environment: InjectResolver {
+final public class InjectionEnvironment: InjectResolver {
     
     @inlinable public override init() {
         super.init()
     }
     
-    init(source: Environment) {
+    init(source: InjectionEnvironment) {
         super.init()
         self.resolvers = source.resolvers
         self.mappedResolvers = source.mappedResolvers
@@ -72,7 +72,7 @@ final public class Environment: InjectResolver {
         }
 }
 
-extension Environment {
+extension InjectionEnvironment {
     
     @discardableResult
     /// provide environment resolver for the given type
@@ -103,7 +103,7 @@ extension Environment {
 
 private var environmentInjectorKey: UnsafeMutableRawPointer = malloc(1)
 
-extension Environment {
+extension InjectionEnvironment {
     
     /// Create new Environment for the given object with inital dependencies
     /// from the source Environment if it have one
@@ -112,14 +112,14 @@ extension Environment {
     ///   - source: source object
     ///   - object: any object
     /// - Returns: Environment object
-    public static func fromObject(_ source: AnyObject, for object: AnyObject) -> Environment {
+    public static func fromObject(_ source: AnyObject, for object: AnyObject) -> InjectionEnvironment {
         let manualProviders = Mirror(reflecting: source).extractManuallyAssignedProvider()
-        guard let sourceEnvironment = objc_getAssociatedObject(source, &environmentInjectorKey) as? Environment else {
+        guard let sourceEnvironment = objc_getAssociatedObject(source, &environmentInjectorKey) as? InjectionEnvironment else {
             let environment = forObject(object)
             environment.add(mappedResolvers: manualProviders)
             return environment
         }
-        let newEnvironment = Environment(source: sourceEnvironment)
+        let newEnvironment = InjectionEnvironment(source: sourceEnvironment)
         newEnvironment.add(mappedResolvers: manualProviders)
         objc_setAssociatedObject(object, &environmentInjectorKey, newEnvironment, .OBJC_ASSOCIATION_RETAIN)
         Mirror(reflecting: object).setInjectContext(newEnvironment)
@@ -129,9 +129,9 @@ extension Environment {
     /// Get the Environment for the given object that used as primary source of Dependencies for Injected.
     /// - Parameter object: any object
     /// - Returns: Environment object
-    public static func forObject(_ object: AnyObject) -> Environment {
-        guard let currentEnvironment = objc_getAssociatedObject(object, &environmentInjectorKey) as? Environment else {
-            let newEnvironment = Environment(extractingFrom: object)
+    public static func forObject(_ object: AnyObject) -> InjectionEnvironment {
+        guard let currentEnvironment = objc_getAssociatedObject(object, &environmentInjectorKey) as? InjectionEnvironment else {
+            let newEnvironment = InjectionEnvironment(extractingFrom: object)
             objc_setAssociatedObject(object, &environmentInjectorKey, newEnvironment, .OBJC_ASSOCIATION_RETAIN)
             Mirror(reflecting: object).setInjectContext(newEnvironment)
             return newEnvironment

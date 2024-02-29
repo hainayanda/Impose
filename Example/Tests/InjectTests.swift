@@ -149,20 +149,20 @@ class InjectTests: QuickSpec {
             }
             it("should inject using same environment") {
                 let sourceEnv = InjectEnv1()
-                Environment.forObject(sourceEnv)
+                InjectionEnvironment.forObject(sourceEnv)
                     .inject(for: Dependency.self, dependency)
                 
                 expect(sourceEnv.dependency === dependency).to(beTrue())
                 
                 let derived1 = InjectEnv2()
-                Environment.fromObject(sourceEnv, for: derived1)
+                InjectionEnvironment.fromObject(sourceEnv, for: derived1)
                     .inject(for: ChildDependency.self, childDependency)
                 
                 expect(derived1.dependency === dependency).to(beTrue())
                 expect(derived1.childDependency === childDependency).to(beTrue())
                 
                 let derived2 = InjectEnv3()
-                Environment.fromObject(derived1, for: derived2)
+                InjectionEnvironment.fromObject(derived1, for: derived2)
                     .inject(for: GrandChildDependency.self, grandChildDependency)
                 
                 expect(derived2.dependency === dependency).to(beTrue())
@@ -174,13 +174,13 @@ class InjectTests: QuickSpec {
                 sourceEnv.dependency = dependency
                 
                 let derived1 = InjectEnv2()
-                Environment.fromObject(sourceEnv, for: derived1)
+                InjectionEnvironment.fromObject(sourceEnv, for: derived1)
                     .inject(for: ChildDependency.self, childDependency)
                 
                 expect(derived1.dependency === dependency).to(beTrue())
                 
                 let derived2 = InjectEnv3()
-                Environment.fromObject(derived1, for: derived2)
+                InjectionEnvironment.fromObject(derived1, for: derived2)
                     .inject(for: GrandChildDependency.self, grandChildDependency)
                 
                 expect(derived2.dependency === dependency).to(beTrue())

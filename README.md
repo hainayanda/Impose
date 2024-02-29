@@ -192,33 +192,33 @@ Injector.shared.addTransient(for: Dependency.self, resolveOn: .main, SomeDepende
 
 If you pass nothing it will try to resolve the dependency on the `DispatchQueue` when dependency resolver is injected.
 
-## Environment
+## InjectionEnvironment
 
-You can define a specific environment for a specific object that will live with that object and become the primary source of dependencies by using the Environment object:
+You can define a specific environment for a specific object that will live with that object and become the primary source of dependencies by using the InjectionEnvironment object:
 
 ```swift
-Environment.forObject(myObject)
+InjectionEnvironment.forObject(myObject)
     .inject(for: Dependency.self, SomeDependency())
     .inject(for: AnotherDependency.self, SomeOtherDependency())
 ```
 
-In the code above, the `myObject` `Injected` propertyWrapper will use the Environment as the primary source of the dependency. It will search in `Injector.shared` tho if the dependency is not provided by the Environment.
+In the code above, the `myObject` `Injected` propertyWrapper will use the InjectionEnvironment as the primary source of the dependency. It will search in `Injector.shared` tho if the dependency is not provided by the InjectionEnvironment.
 
-You can transfer the dependency providers from another object Environment to another, so it will use a similar Environment:
+You can transfer the dependency providers from another object InjectionEnvironment to another, so it will use a similar InjectionEnvironment:
 
 ```swift
-Environment.fromObject(myObject, for: someObject)
+InjectionEnvironment.fromObject(myObject, for: someObject)
   .inject(for: SomeOtherDependency.self, SomeDependency())
 ```
 
-In the code above, someObject will have a new Environment that contains all of the myObject dependency providers, plus the one added later. It will populate the dependency from myObject Injected propertyWrapper too if it's assigned manually.
+In the code above, someObject will have a new InjectionEnvironment that contains all of the myObject dependency providers, plus the one added later. It will populate the dependency from myObject Injected propertyWrapper too if it's assigned manually.
 
 ```swift
 class MyObject { 
     @Injected manual: ManualDependency
     
     init() { 
-        // this dependency will be transfered to another Environment created from this object
+        // this dependency will be transfered to another InjectionEnvironment created from this object
         manualDependency = MyManualDependency()
     }
 }
@@ -249,7 +249,7 @@ Injector.shared.addTransient(for: [Dependency.self, OtherDependency.self], SomeD
 or even for the environment:
 
 ```swift
-Environment.forObject(myObject).inject(for: [Dependency.self, OtherDependency.self], SomeDependency())
+InjectionEnvironment.forObject(myObject).inject(for: [Dependency.self, OtherDependency.self], SomeDependency())
 ```
 
 ## Multiple Injectors
