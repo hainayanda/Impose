@@ -1,3 +1,7 @@
+# Repository archived
+For enhanced environment management in SwiftUI, we recommend [SwiftEnvironment](https://github.com/hainayanda/SwiftEnvironment)! SwiftEnvironment offers robust features and will be supported in the future. 
+
+
 <p align="center">
   <img width="175" height="192" src="Impose.png"/>
 </p>
